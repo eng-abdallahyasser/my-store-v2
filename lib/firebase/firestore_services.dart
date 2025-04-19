@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:store_app_v2/data/model/address.dart';
+import 'package:store_app_v2/data/model/category.dart';
+import 'package:store_app_v2/data/model/my_order.dart';
 import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/data/model/order.dart';
 
@@ -12,10 +14,13 @@ class FirestoreServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<DocumentReference> addProduct(
-      Product product, List<Uint8List> images) async {
+    Product product,
+    List<Uint8List> images,
+  ) async {
     // Add the product to Firestore
-    DocumentReference docRef =
-        await _firestore.collection("products").add(product.toJson());
+    DocumentReference docRef = await _firestore
+        .collection("products")
+        .add(product.toJson());
 
     // Generate URLs for images
     List<String> urls = [];
@@ -29,7 +34,9 @@ class FirestoreServices {
   }
 
   Future<int> incrementFavoriteCountById(
-      String productId, String userId) async {
+    String productId,
+    String userId,
+  ) async {
     DocumentReference docRef = _firestore.collection("products").doc(productId);
     DocumentReference userRef = _firestore.collection('users').doc(userId);
     int currentFavoriteCount = 0;
@@ -39,25 +46,30 @@ class FirestoreServices {
       currentFavoriteCount =
           (docSnapshot.data() as Map<String, dynamic>)['favouritecount'] ?? 0;
       if (docSnapshot.exists) {
-        transaction
-            .update(docRef, {"favouritecount": currentFavoriteCount + 1});
+        transaction.update(docRef, {
+          "favouritecount": currentFavoriteCount + 1,
+        });
       }
 
       await userRef.set(
-          {
-            'favorites': FieldValue.arrayUnion([productId])
-          },
-          SetOptions(merge:true)); // Merge ensures existing fields are not overwritten
+        {
+          'favorites': FieldValue.arrayUnion([productId]),
+        },
+        SetOptions(merge: true),
+      ); // Merge ensures existing fields are not overwritten
     });
 
     return currentFavoriteCount + 1;
   }
 
   Future<int> decrementFavoriteCountById(
-      String productId, String userId) async {
+    String productId,
+    String userId,
+  ) async {
     DocumentReference docRef = _firestore.collection("products").doc(productId);
-    DocumentReference userRef =
-        FirebaseFirestore.instance.collection('users').doc(userId);
+    DocumentReference userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId);
     int newFavoriteCount = 0;
     // Use a transaction to ensure atomic updates
     await _firestore.runTransaction((transaction) async {
@@ -73,7 +85,7 @@ class FirestoreServices {
       }
 
       await userRef.update({
-        'favorites': FieldValue.arrayRemove([productId])
+        'favorites': FieldValue.arrayRemove([productId]),
       });
     });
     return newFavoriteCount;
@@ -81,10 +93,11 @@ class FirestoreServices {
 
   Future<void> addAdminToken(String token) async {
     // Query to check if the token already exists
-    QuerySnapshot existingTokens = await _firestore
-        .collection("admins")
-        .where("token", isEqualTo: token)
-        .get();
+    QuerySnapshot existingTokens =
+        await _firestore
+            .collection("admins")
+            .where("token", isEqualTo: token)
+            .get();
 
     // If the token already exists, return early to prevent duplicate entry
     if (existingTokens.docs.isNotEmpty) {
@@ -116,19 +129,21 @@ class FirestoreServices {
     QuerySnapshot querySnapshot = await _firestore.collection("admins").get();
 
     // Extract tokens from the documents
-    List<String> tokens = querySnapshot.docs.map((doc) {
-      return doc['token'] as String;
-    }).toList();
+    List<String> tokens =
+        querySnapshot.docs.map((doc) {
+          return doc['token'] as String;
+        }).toList();
 
     // Return the list of tokens
     return tokens;
   }
 
-  Future<void> addOrder(OrderForDelivary order) async {
+  Future<void> addOrder(MyOrder order) async {
     try {
       // Create a reference to the counter document
-      DocumentReference counterRef =
-          _firestore.collection("counters").doc("orderCounter");
+      DocumentReference counterRef = _firestore
+          .collection("counters")
+          .doc("orderCounter");
 
       // Run a transaction to ensure atomicity
       await _firestore.runTransaction((transaction) async {
@@ -139,23 +154,25 @@ class FirestoreServices {
         int currentNumber = 0;
         if (!counterSnapshot.exists) {
           transaction.set(counterRef, {'currentNumber': currentNumber});
-        } else {
-          currentNumber = (counterSnapshot.data()
+        } else if (counterSnapshot.data() is Map<String, dynamic>) {
+          currentNumber =
+              (counterSnapshot.data()
                   as Map<String, dynamic>)['currentNumber'] ??
               0;
         }
+        log(" Counter document does not contain a valid currentNumber field.  $currentNumber");
 
         // Increment the counter
         int newNumber = currentNumber + 1;
 
         // Update the order with the new number
-        order.number = newNumber;
+        order.orderNumber = newNumber;
 
         // Create a new document reference for the order
         DocumentReference docRef = _firestore.collection("orders").doc();
 
         // Add the order to Firestore within the transaction
-        transaction.set(docRef, order.toJson());
+        transaction.set(docRef, order.toMap());
 
         // Update the orderID field in the newly created order document
         transaction.update(docRef, {"orderID": docRef.id});
@@ -164,7 +181,7 @@ class FirestoreServices {
         transaction.update(counterRef, {'currentNumber': newNumber});
       });
     } catch (error) {
-      log("Failed to add order: $error");
+      log("Failed to add order ff: $error");
     }
   }
 
@@ -199,10 +216,11 @@ class FirestoreServices {
 
   Future<List<Product>> getProductsByCategory(String category) async {
     try {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('products')
-          .where('category', isEqualTo: category)
-          .get();
+      QuerySnapshot querySnapshot =
+          await _firestore
+              .collection('products')
+              .where('category', isEqualTo: category)
+              .get();
 
       return querySnapshot.docs
           .map((doc) => Product.fromFirestore(doc))
@@ -212,13 +230,29 @@ class FirestoreServices {
       return [];
     }
   }
+  Future<List<Category>> getCategories() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await _firestore
+              .collection('categories')
+              .get();
+
+      return querySnapshot.docs
+          .map((doc) => Category.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      log('Error fetching categories: $e');
+      return [];
+    }
+  }
 
   Future<List<Product>> getPopularProducts() async {
     try {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('products')
-          .where('isPopular', isEqualTo: true)
-          .get();
+      QuerySnapshot querySnapshot =
+          await _firestore
+              .collection('products')
+              .where('isPopular', isEqualTo: true)
+              .get();
 
       return querySnapshot.docs
           .map((doc) => Product.fromFirestore(doc))
@@ -231,17 +265,17 @@ class FirestoreServices {
 
   Future<void> addAddress(Address address) async {
     try {
-      DocumentReference docRef =
-          await _firestore.collection("addresses").add(address.toMap());
+      DocumentReference docRef = await _firestore
+          .collection("addresses")
+          .add(address.toMap());
 
       // Get generated Firestore document ID
       String addressId = docRef.id;
 
       // Update Firestore document with the addressId
-      await _firestore
-          .collection("addresses")
-          .doc(addressId)
-          .update({"addressId": addressId});
+      await _firestore.collection("addresses").doc(addressId).update({
+        "addressId": addressId,
+      });
     } catch (e) {
       log("Error adding address: $e");
     }
@@ -249,10 +283,11 @@ class FirestoreServices {
 
   Future<List<Address>> getAddresses(String userId) async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection("addresses")
-          .where("userId", isEqualTo: userId)
-          .get();
+      QuerySnapshot snapshot =
+          await _firestore
+              .collection("addresses")
+              .where("userId", isEqualTo: userId)
+              .get();
 
       return snapshot.docs
           .map((doc) => Address.fromMap(doc.data() as Map<String, dynamic>))

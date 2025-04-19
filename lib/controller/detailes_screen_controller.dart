@@ -76,7 +76,8 @@ class DetailesScreenController extends GetxController {
     //   }
     // }
     images = await Future.wait(
-        product.imagesUrl.map((url) => Repo.getProductImageUrl(url)).toList());
+      product.imagesUrl.map((url) => Repo.getProductImageUrl(url)).toList(),
+    );
     isCoverImageLoaded = true;
     update();
   }
@@ -100,8 +101,20 @@ class DetailesScreenController extends GetxController {
       return;
     }
 
-    Repo.demoCarts
-        .add(CartItem(numOfItem: numberOfItems, product: product.copyWith(), note: ''));
+    Repo.demoCarts.add(
+      CartItem(
+        totalPrice: product.calculateTotalCost() * numberOfItems,
+        unitPrice: product.calculateTotalCost(),
+        quantity: numberOfItems,
+        productId: product.id,
+        choosedVariant:
+            product.options
+                .map((option) => option.choosedVariant)
+                .expand((variants) => variants)
+                .toList(),
+        note: '',
+      ),
+    );
     Get.back();
     Get.snackbar(
       'Success',

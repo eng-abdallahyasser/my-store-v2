@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/address.dart';
 import 'package:store_app_v2/data/model/cart_item.dart';
-import 'package:store_app_v2/data/model/order.dart';
+import 'package:store_app_v2/data/model/my_order.dart';
 import 'package:store_app_v2/view/screens/addresses/address.dart';
 
 class CartController extends GetxController {
@@ -13,13 +14,14 @@ class CartController extends GetxController {
   TextEditingController addressController = TextEditingController();
   List<Address> addresses = [];
   Address selectedAddress = Address(
-      userId: "userId",
-      addressId: "addressId",
-      name: "name",
-      latitude: 0,
-      longitude: 0,
-      address: "address",
-      phoneNumber: "phoneNumber");
+    userId: "userId",
+    addressId: "addressId",
+    name: "name",
+    latitude: 0,
+    longitude: 0,
+    address: "address",
+    phoneNumber: "phoneNumber",
+  );
 
   @override
   void onInit() async {
@@ -35,40 +37,48 @@ class CartController extends GetxController {
   void calculateTotal() {
     total = 0.0;
     for (var cartItem in cartList) {
-      if (cartItem.product != null) {
-        total += (cartItem.product!.calculateTotalCost()) * cartItem.numOfItem;
-      }
+      total += cartItem.totalPrice;
     }
     update();
   }
 
   void removeOneProduct(int index) {
-    if (cartList[index].numOfItem > 1) {
-      cartList[index].numOfItem -= 1;
-    } else if (cartList[index].numOfItem == 1) {
-      Get.dialog(AlertDialog(
-        title: const Text("Are you sure?"),
-        actions: [
-          TextButton(
+    if (cartList[index].quantity > 1) {
+      cartList[index]= cartList[index].copyWith(
+        quantity: cartList[index].quantity - 1,
+        totalPrice: cartList[index].totalPrice - cartList[index].unitPrice,
+      );
+    } else if (cartList[index].quantity == 1) {
+      Get.dialog(
+        AlertDialog(
+          title: const Text("Are you sure?"),
+          actions: [
+            TextButton(
               onPressed: () {
                 cartList.removeAt(index);
                 Get.back();
                 calculateTotal();
               },
-              child: const Text("Yes, Remove It")),
-          TextButton(
+              child: const Text("Yes, Remove It"),
+            ),
+            TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No"))
-        ],
-      ));
+              child: const Text("No"),
+            ),
+          ],
+        ),
+      );
     }
     calculateTotal();
   }
 
   void addOneProduct(int index) {
-    cartList[index].numOfItem += 1;
+    cartList[index]= cartList[index].copyWith(
+      quantity: cartList[index].quantity + 1,
+      totalPrice: cartList[index].totalPrice + cartList[index].unitPrice,
+    );
     calculateTotal();
   }
 
@@ -85,12 +95,18 @@ class CartController extends GetxController {
       ),
     );
 
-    OrderForDelivary order = OrderForDelivary(
-      number: 0,
-      cartItem: cartList,
-      orderID: "orderID",
-      addressID: "addressID",
-      userID: "userID",
+    MyOrder order = MyOrder(
+      id: "",
+      userId: "",
+      customerPhone: selectedAddress.phoneNumber,
+      shippingAddress: selectedAddress.addressId,
+      items: cartList,
+      total:total,
+      status: "pending",
+      createdAt:Timestamp.now(),
+      paymentStatus: "unpaid",
+      customerName: "customerName",
+      customerEmail: "customerEmail",
     );
 
     //saving order ....
@@ -111,43 +127,53 @@ class CartController extends GetxController {
   void placeOreder() async {
     // add progress indcator here
     Get.defaultDialog(
-        title: "Saving Your Order",
-        content: const Column(children: [
+      title: "Saving Your Order",
+      content: const Column(
+        children: [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text("laoding")
-        ]));
+          Text("laoding"),
+        ],
+      ),
+    );
     List<Address> addresses = await Repo.getAddresses();
     if (addresses.isEmpty) {
       Get.back();
-      Get.snackbar("Error", "Please add your address first",
-          duration: const Duration(seconds: 10));
+      Get.snackbar(
+        "Error",
+        "Please add your address first",
+        duration: const Duration(seconds: 10),
+      );
       Get.to(() => AddressScreen());
-    }else if(selectedAddress.latitude==0){
+    } else if (selectedAddress.latitude == 0) {
       Get.back();
-      Get.snackbar("Error", "Please select your address first",
-          duration: const Duration(seconds: 10));
-    }
-     else {
+      Get.snackbar(
+        "Error",
+        "Please select your address first",
+        duration: const Duration(seconds: 10),
+      );
+    } else {
       Get.back();
       Get.defaultDialog(
-          title: "Confirm Your Address",
-          content: Column(children: [
+        title: "Confirm Your Address",
+        content: Column(
+          children: [
             const SizedBox(height: 20),
             Text(selectedAddress.address),
             const SizedBox(height: 20),
             Text(selectedAddress.phoneNumber),
             const SizedBox(height: 20),
-          ]),
-          onConfirm: () {
-            Get.back();
-            saveOrder();
-          },
-          textConfirm: "Confirm",
-          onCancel: () {
-            Get.back();
-
-          });
+          ],
+        ),
+        onConfirm: () {
+          Get.back();
+          saveOrder();
+        },
+        textConfirm: "Confirm",
+        onCancel: () {
+          Get.back();
+        },
+      );
     }
   }
 

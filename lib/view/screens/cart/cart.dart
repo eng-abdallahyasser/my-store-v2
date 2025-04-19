@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/controller/cart_controller.dart';
 import 'package:store_app_v2/core/constants.dart';
+import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/view/screens/cart/address_picker.dart';
 import 'package:store_app_v2/view/screens/cart/check_out_card.dart';
 import 'package:store_app_v2/view/screens/cart/cart_card.dart';
@@ -43,6 +44,8 @@ class CartScreen extends StatelessWidget {
                         itemBuilder: (context, index) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: CartCard(
+                              product: Repo.getFetchedProductById(
+                                  controller.cartList[index].productId),
                               cart: controller.cartList[index],
                               add: () {
                                 controller.addOneProduct(index);

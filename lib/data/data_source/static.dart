@@ -1,6 +1,8 @@
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/model/bottom_bar_destination.dart';
+import 'package:store_app_v2/data/model/category.dart';
 import 'package:store_app_v2/data/model/onboarding.dart';
+import 'package:store_app_v2/firebase/firestore_services.dart';
 import 'package:store_app_v2/view/screens/cart/cart.dart';
 import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 import 'package:store_app_v2/view/screens/home/home.dart';
@@ -53,15 +55,8 @@ List<BottomBarDestination> bottomBarDestinations = [
     routeWidget: Profile(),
   )
 ];
-
-List<String> categories = [
-  "Sushi Rolls",
-  "Nigiri",
-  "Sashimi",
-  "Bento Boxes",
-  "Side Dishes",
-  "Beverages"
-];
+FirestoreServices firestoreServices = FirestoreServices();
+Future<List<Category>> categories = firestoreServices.getCategories();
 
 const String description =
     "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …";

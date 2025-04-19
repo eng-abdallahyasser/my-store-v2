@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer' show log;
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,6 @@ class Product {
   final int favouritecount;
   List<Option> options;
   List<String> optionsNames;
-        
 
   Product({
     this.id = "",
@@ -39,21 +40,21 @@ class Product {
   });
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "category": category,
-        "images": imagesUrl,
-        "colors": colorsStringList(),
-        "rating": rating,
-        "isPopular": isPopular,
-        "favouritecount": favouritecount,
-        "title": title,
-        "price": price,
-        "oldPrice": oldPrice,
-        "description": description,
-        "quantity": quantity,
-        "options": options.map((x) => x.toJson()).toList(),
-        "optionsNames": optionsNames
-      };
+    "id": id,
+    "category": category,
+    "images": imagesUrl,
+    "colors": colorsStringList(),
+    "rating": rating,
+    "isPopular": isPopular,
+    "favouritecount": favouritecount,
+    "title": title,
+    "price": price,
+    "oldPrice": oldPrice,
+    "description": description,
+    "quantity": quantity,
+    "options": options.map((x) => x.toJson()).toList(),
+    "optionsNames": optionsNames,
+  };
 
   List<String> colorsStringList() {
     List<String> colorsStringList = [];
@@ -69,21 +70,22 @@ class Product {
     return this;
   }
 
-  double calculateTotalCost(){
-    double choosedVariantCost=0.0;
-     for(Option option in options){
-      for(Variant variant in option.choosedVariant) {
-        choosedVariantCost+=variant.price;
-      }   
+  double calculateTotalCost() {
+    double choosedVariantCost = 0.0;
+    for (Option option in options) {
+      for (Variant variant in option.choosedVariant) {
+        choosedVariantCost += variant.price;
+      }
     }
-    return choosedVariantCost+price;
+    return choosedVariantCost + price;
   }
-  String optionDescription(){
-    String optionDescription="";
-     for(Option option in options){
-      for(Variant variant in option.choosedVariant) {
-        optionDescription+="${variant.name}, ";
-      }   
+
+  String optionDescription() {
+    String optionDescription = "";
+    for (Option option in options) {
+      for (Variant variant in option.choosedVariant) {
+        optionDescription += "${variant.name}, ";
+      }
     }
     return optionDescription;
   }
@@ -91,12 +93,47 @@ class Product {
   // Factory method to create a Product from Firestore data
   factory Product.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> json = doc.data() as Map<String, dynamic>;
+        // Convert dynamic options list to List<Option>
+  List<Option> parseOptions(List<dynamic>? optionsData) {
+    if (optionsData == null) return [];
+    
+    return optionsData.map((option) {
+      // Handle case where option might be a JSON string
+      if (option is String) {
+        try {
+          option = jsonDecode(option) as Map<String, dynamic>;
+        } catch (e) {
+          log('Error parsing option string: $e');
+          return Option(
+            min: 1,
+            max: 1,
+            optionName: 'Invalid Option',
+            variants: [],
+            choosedVariant: [],
+          );
+        }
+      }
+      
+      return Option(
+        min: option['min'] as int? ?? 1,
+        max: option['max'] as int? ?? 1,
+        optionName: option['optionName'] as String? ?? 'Unnamed Option',
+        variants: (option['variants'] as List<dynamic>?)
+            ?.map((v) => Variant.fromJson(v))
+            .toList() ?? [],
+        choosedVariant: (option['choosedVariant'] as List<dynamic>?)
+            ?.map((v) => Variant.fromJson(v))
+            .toList() ?? [],
+      );
+    }).toList();
+  }
     return Product(
       id: json['id'] ?? "",
       imagesUrl: List<String>.from(json['images'] ?? []),
-      colors: (json['colors'] as List<dynamic>)
-          .map((colorString) => Color(int.parse(colorString, radix: 16)))
-          .toList(),
+      colors:
+          (json['colors'] as List<dynamic>)
+              .map((colorString) => Color(int.parse(colorString, radix: 16)))
+              .toList(),
       category: json['category'] ?? "not foung",
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       isInitialezed: false,
@@ -107,79 +144,46 @@ class Product {
       oldPrice: (json['oldPrice'] as num?)?.toDouble() ?? 0.0,
       description: json['description'] ?? "",
       quantity: json['quantity'] ?? 1,
-      options: json['option'] ??
-          [
-            Option(
-                min: 1,
-                max: 1,
-                variants: [
-                  Variant(id: "id", name: "name", price: 2),
-                  Variant(id: "id", name: "name", price: 2)
-                ],
-                choosedVariant: [],
-                optionName: 'option 1'),
-            Option(
-                min: 1,
-                max: 2,
-                variants: [
-                  Variant(id: "id", name: "name", price: 2),
-                  Variant(id: "id", name: "name", price: 2),
-                  Variant(id: "id", name: "name", price: 2)
-                ],
-                choosedVariant: [Variant(id: "id", name: "name", price: 2)],
-                optionName: 'option name 2'),
-            Option(
-                min: 1,
-                max: 1,
-                variants: [Variant(id: "id", name: "name", price: 2)],
-                choosedVariant: [],
-                optionName: 'option 3'),
-            Option(
-                min: 1,
-                max: 1,
-                variants: [Variant(id: "id", name: "name", price: 2)],
-                choosedVariant: [],
-                optionName: 'option name 4')
-          ],
+      options: parseOptions(json['options'] as List<dynamic>?),
       optionsNames: List<String>.from(json['optionsNames'] ?? []),
     );
   }
 
   Product copyWith({
-  String? id,
-  int? quantity,
-  String? title,
-  String? description,
-  String? category,
-  List<String>? imagesUrl,
-  Uint8List? coverImageUnit8List,
-  List<Color>? colors,
-  double? rating,
-  double? price,
-  double? oldPrice,
-  bool? isInitialezed,
-  bool? isPopular,
-  int? favouritecount,
-  List<Option>? options,
-  List<String>? optionsNames,
-}) {
-  return Product(
-    id: id ?? this.id,
-    quantity: quantity ?? this.quantity,
-    title: title ?? this.title,
-    description: description ?? this.description,
-    category: category ?? this.category,
-    imagesUrl: imagesUrl ?? this.imagesUrl,
-    coverImageUnit8List: coverImageUnit8List ?? this.coverImageUnit8List,
-    colors: colors ?? this.colors,
-    rating: rating ?? this.rating,
-    price: price ?? this.price,
-    oldPrice: oldPrice ?? this.oldPrice,
-    isInitialezed: isInitialezed ?? this.isInitialezed,
-    isPopular: isPopular ?? this.isPopular,
-    favouritecount: favouritecount ?? this.favouritecount,
-    options: options ?? this.options.map((o) => o.copyWith()).toList(),
-    optionsNames: optionsNames ?? List<String>.from(this.optionsNames),
-  );
-}
+    String? id,
+    int? quantity,
+    String? title,
+    String? description,
+    String? category,
+    List<String>? imagesUrl,
+    Uint8List? coverImageUnit8List,
+    List<Color>? colors,
+    double? rating,
+    double? price,
+    double? oldPrice,
+    bool? isInitialezed,
+    bool? isPopular,
+    int? favouritecount,
+    List<Option>? options,
+    List<String>? optionsNames,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      quantity: quantity ?? this.quantity,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      imagesUrl: imagesUrl ?? this.imagesUrl,
+      coverImageUnit8List: coverImageUnit8List ?? this.coverImageUnit8List,
+      colors: colors ?? this.colors,
+      rating: rating ?? this.rating,
+      price: price ?? this.price,
+      oldPrice: oldPrice ?? this.oldPrice,
+      isInitialezed: isInitialezed ?? this.isInitialezed,
+      isPopular: isPopular ?? this.isPopular,
+      favouritecount: favouritecount ?? this.favouritecount,
+      options: options ?? this.options.map((o) => o.copyWith()).toList(),
+      optionsNames: optionsNames ?? List<String>.from(this.optionsNames),
+    );
+  }
 }

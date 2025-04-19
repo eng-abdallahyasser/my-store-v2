@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:store_app_v2/data/model/address.dart';
+import 'package:store_app_v2/data/model/my_order.dart';
 import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/data/model/cart_item.dart';
 import 'package:store_app_v2/data/model/order.dart';
@@ -504,9 +505,16 @@ class Repo {
     }
   }
 
-  static Future<void> addOrder(OrderForDelivary order) async {
-    order.userID = _auth.getCurrentUser()!.uid;
-    await _firestore.addOrder(order);
+  static Future<void> addOrder(MyOrder order) async {
+    String userId = _auth.getCurrentUser()!.uid;
+    String userEmail = _auth.getCurrentUser()!.email ?? 'not found';
+    String userName = _auth.getCurrentUser()!.displayName ?? "Unknown User";
+
+    await _firestore.addOrder(order.copyWith(
+        userId: userId,
+        customerEmail: userEmail,
+        customerName: userName,
+      ));
   }
 
   static Future<void> addAddress(Address address) async {
@@ -520,4 +528,12 @@ class Repo {
   }
 
   static saveAdminToken() {}
+
+  static Product getFetchedProductById(String productId) {
+    if (isProductsFetched) {
+      return fetchedProducts.firstWhere((element) => element.id == productId);
+    }
+    // If not fetched, return a default product or handle the error as needed
+    throw Exception("Product not found in fetched products.");
+    }
 }
