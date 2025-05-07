@@ -102,7 +102,7 @@ class CartController extends GetxController {
       shippingAddress: selectedAddress.addressId,
       items: cartList,
       total:total,
-      status: "pending",
+      status: "Pending",
       createdAt:Timestamp.now(),
       paymentStatus: "unpaid",
       customerName: "customerName",

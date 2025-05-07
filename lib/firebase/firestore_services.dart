@@ -176,7 +176,7 @@ class FirestoreServices {
 
         // Update the orderID field in the newly created order document
         transaction.update(docRef, {"orderID": docRef.id});
-
+        
         // Update the counter value in Firestore
         transaction.update(counterRef, {'currentNumber': newNumber});
       });

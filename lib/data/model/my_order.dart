@@ -72,6 +72,7 @@ class MyOrder {
     return <String, dynamic>{
       'id': id,
       'userId': userId,
+      'orderNumber': orderNumber,
       'items': items.map((x) => x.toJson()).toList(),
       'total': total,
       'status': status,
