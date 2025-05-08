@@ -8,23 +8,6 @@ class MyImages {
   static const String onBoardingImage3 = 'assets/images/onboarding3.png';
 }
 
-class MyRoutes {
-  static const auth = "/auth";
-  static const onboarding = "/onboarding";
-  static const signInScreen = "/sign_in";
-  static const signUpScreen = "/sign_un";
-  static const home = "/home";
-  static const cart = "/cart";
-  static const profile = "/profile";
-  static const search = "/search";
-  static const categories = "/categories";
-  static const navigationBarWraper = "/navigationBarWraper";
-  static const itemDetails = "/itemDetails";
-  static const admin = "/admin";
-  static const splashScreen="/splash";
-  static const addressScreen="/addresses";
-}
-
 class MyColors {
   
   static const Color gray = Color(0xff83848a);

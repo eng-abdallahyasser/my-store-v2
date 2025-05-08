@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 import 'package:store_app_v2/view/screens/addresses/address.dart';
 import 'package:store_app_v2/view/screens/auth/signin.dart';
 import 'package:store_app_v2/view/screens/auth/signup.dart';
@@ -9,7 +10,6 @@ import 'package:store_app_v2/view/screens/onboarding.dart';
 import 'package:store_app_v2/view/screens/profile/profile.dart';
 import 'package:store_app_v2/view/global%20widget/search.dart';
 import 'package:store_app_v2/view/screens/splash_screen/splash_screen.dart';
-import 'package:store_app_v2/core/constants.dart';
 
 Map<String, Widget Function(BuildContext)> routes = {
   MyRoutes.onboarding: (_) => Onboarding(),

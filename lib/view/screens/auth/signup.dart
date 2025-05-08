@@ -4,6 +4,7 @@ import 'package:store_app_v2/controller/sign_up_controller.dart';
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/view/global%20widget/my_button.dart';
 import 'package:store_app_v2/view/global%20widget/my_textfield.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 
 class SignUpScreen extends StatelessWidget {
   final SignUpController controller = Get.put(SignUpController());

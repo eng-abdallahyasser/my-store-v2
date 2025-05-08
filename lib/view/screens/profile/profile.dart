@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/controller/profile_controller.dart';
 import 'package:store_app_v2/view/screens/addresses/address.dart';
+import 'package:store_app_v2/view/screens/orders/orders_list_screen.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_menu.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_pic.dart';
 
@@ -33,6 +34,13 @@ class Profile extends StatelessWidget {
               icon: "assets/icons/Location point.svg",
               press: () {
                 Get.to(() => AddressScreen());
+              },
+            ),
+            ProfileMenu(
+              text: "My Orders",
+              icon: "assets/icons/Cart Icon.svg",
+              press: () {
+                Get.to(() => OrdersListScreen());
               },
             ),
             ProfileMenu(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/data_source/static.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 
 class OnboardingController extends GetxController {
   int currentIndex = 0;

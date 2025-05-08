@@ -7,6 +7,7 @@ import 'package:store_app_v2/view/screens/cart/cart.dart';
 import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 import 'package:store_app_v2/view/screens/home/home.dart';
 import 'package:store_app_v2/view/screens/profile/profile.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 
 List<OnboardingData> onboardingList = [
   OnboardingData(
