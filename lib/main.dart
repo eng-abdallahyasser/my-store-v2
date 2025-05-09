@@ -8,7 +8,6 @@ import 'package:store_app_v2/routes/app_pages.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
-import 'package:store_app_v2/router.dart';
 
 void main() async {
 

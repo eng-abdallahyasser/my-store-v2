@@ -36,6 +36,7 @@ dependencies:
   firebase_storage: ^12.4.5
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
   flutter_map: ^8.1.1
   flutter_svg: ^2.0.17
   geolocator: ^13.0.4
@@ -43,6 +44,13 @@ dependencies:
   home_widget: ^0.7.0+1
   latlong2: ^0.9.1
   shared_preferences: ^2.5.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.jpg"
+  adaptive_icon_foreground: "assets/images/play_store_512.png"
+  adaptive_icon_background: "#ffffff"
 
 dev_dependencies:
   flutter_lints: ^5.0.0

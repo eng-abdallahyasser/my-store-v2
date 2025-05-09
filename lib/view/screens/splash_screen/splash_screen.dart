@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   final _auth = Auth();
   @override
   void initState() {
-    Timer(const Duration(milliseconds: 2500), () {
+    Timer(const Duration(milliseconds: 2000), () {
       Get.off(() => Repo.onboardingShown ? _authGate() : Onboarding());
     });
     super.initState();
@@ -35,11 +35,13 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(
                 width: MediaQuery.of(context).size.width / 1.5,
                 child:
-                    Image.asset("assets/images/Lou Roll Project Final-1.png"),
+                    ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                    child: Image.asset("assets/images/logo.jpg")),
               ),
-              // const SizedBox(
-              //   height: 40,
-              // ),
+              const SizedBox(
+                height: 40,
+              ),
               const Text(
                 "Developed by Eng",
                 style: TextStyle(
