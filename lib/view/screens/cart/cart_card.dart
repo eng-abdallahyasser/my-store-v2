@@ -39,25 +39,22 @@ class CartCard extends StatelessWidget {
                           product.coverImageUnit8List!,
                           fit: BoxFit.cover,
                         )
-                        : FutureBuilder(
-                          future: product.initializeCoverImage(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (snapshot.hasError || snapshot.data == null) {
-                              return Image.asset(
-                                "assete/images/product_placeholder.jpg",
-                                fit: BoxFit.cover,
-                              );
-                            }
-                            return Image.memory(
-                              snapshot.data!.coverImageUnit8List!,
-                              fit: BoxFit.cover,
-                            );
+                        : Image.network(product.imagesUrl[0],
+                          fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                                child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ));
+                          },
+                          errorBuilder: (BuildContext context, Object error,
+                              StackTrace? stackTrace) {
+                            return const Center(child: Icon(Icons.broken_image));
                           },
                         ),
               ),

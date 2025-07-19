@@ -74,7 +74,7 @@ class ProductCard extends StatelessWidget {
                   style: TextStyle(fontSize: 14, color: MyColors.elsie),
                 ),
                 Text(
-                  "${product.price} ",
+                  "${product.price.toString().replaceAll(RegExp(r'\.0$'), '')} ",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -83,7 +83,7 @@ class ProductCard extends StatelessWidget {
                 ),
                 product.oldPrice > product.price
                     ? Text(
-                      " ${product.oldPrice} ",
+                      " ${product.oldPrice.toString().replaceAll(RegExp(r'\.0$'), '')} ",
                       style: const TextStyle(
                         color: MyColors.gray,
                         decoration: TextDecoration.lineThrough,
