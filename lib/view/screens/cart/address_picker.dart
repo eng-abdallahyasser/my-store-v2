@@ -6,8 +6,11 @@ import 'package:store_app_v2/data/model/address.dart';
 class AddressPickerBottomSheet extends StatelessWidget {
   final List<Address> addresses;
   final Function onSelectedAddress;
-  const AddressPickerBottomSheet(
-      {super.key, required this.addresses, required this.onSelectedAddress});
+  const AddressPickerBottomSheet({
+    super.key,
+    required this.addresses,
+    required this.onSelectedAddress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +34,10 @@ class AddressPickerBottomSheet extends StatelessWidget {
                   leading: SvgPicture.asset(
                     "assets/icons/Location point.svg",
                     width: 22,
-                    colorFilter: const ColorFilter.mode(MyColors.elsie,
-                        BlendMode.srcIn), 
+                    colorFilter: const ColorFilter.mode(
+                      MyColors.mainColor,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   onTap: () {
                     onSelectedAddress(addresses[index]);

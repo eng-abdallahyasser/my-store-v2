@@ -85,7 +85,7 @@ class SmallProductImage extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: MyColors.elsie.withOpacity(
+            color: MyColors.mainColor.withOpacity(
               controller.selectedImage == index ? 1 : 0,
             ),
           ),

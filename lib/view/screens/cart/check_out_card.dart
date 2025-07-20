@@ -5,18 +5,12 @@ import 'package:store_app_v2/core/constants.dart';
 
 class CheckoutCard extends StatelessWidget {
   final CartController controller;
-  const CheckoutCard({
-    super.key,
-    required this.controller,
-  });
+  const CheckoutCard({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 16,
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       // height: 174,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -29,7 +23,7 @@ class CheckoutCard extends StatelessWidget {
             offset: const Offset(0, -15),
             blurRadius: 20,
             color: const Color(0xFFDADADA).withOpacity(0.15),
-          )
+          ),
         ],
       ),
       child: SafeArea(
@@ -55,29 +49,30 @@ class CheckoutCard extends StatelessWidget {
                 const Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
-                  color: MyColors.elsie,
-                )
+                  color: MyColors.mainColor,
+                ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: 
-                     Text.rich(
-                      TextSpan(
-                        text: "Total:\n",
-                        children: [
-                          TextSpan(
-                            text: "\$ ${controller.total}",
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.black),
+                  child: Text.rich(
+                    TextSpan(
+                      text: "Total:\n",
+                      children: [
+                        TextSpan(
+                          text: "\$ ${controller.total}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
                           ),
-                        ],
-                      ),
-                    )
+                        ),
+                      ],
+                    ),
                   ),
-                
+                ),
+
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {

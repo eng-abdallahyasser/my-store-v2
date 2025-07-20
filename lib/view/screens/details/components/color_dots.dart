@@ -6,11 +6,7 @@ import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/view/global%20widget/rounded_icon_btn.dart';
 
 class ColorDots extends StatelessWidget {
-  const ColorDots({
-    super.key,
-    required this.product,
-    required this.controller,
-  });
+  const ColorDots({super.key, required this.product, required this.controller});
 
   final Product product;
   final DetailesScreenController controller;
@@ -33,15 +29,12 @@ class ColorDots extends StatelessWidget {
                     color: product.colors[index],
                     isSelected: index == controller.selectedColor,
                   );
-                }
+                },
               ),
             ),
           ),
           const Spacer(),
-          RoundedIconBtn(
-            icon: Icons.remove,
-            press: controller.removeOneItem,
-          ),
+          RoundedIconBtn(icon: Icons.remove, press: controller.removeOneItem),
           const SizedBox(width: 20),
           RoundedIconBtn(
             icon: Icons.add,
@@ -55,11 +48,7 @@ class ColorDots extends StatelessWidget {
 }
 
 class ColorDot extends StatelessWidget {
-  const ColorDot({
-    super.key,
-    required this.color,
-    required this.isSelected,
-  });
+  const ColorDot({super.key, required this.color, required this.isSelected});
 
   final Color color;
   final bool isSelected;
@@ -73,15 +62,13 @@ class ColorDot extends StatelessWidget {
       width: 40,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border:
-            Border.all(color: isSelected ? MyColors.elsie : Colors.transparent),
+        border: Border.all(
+          color: isSelected ? MyColors.mainColor : Colors.transparent,
+        ),
         shape: BoxShape.circle,
       ),
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       ),
     );
   }

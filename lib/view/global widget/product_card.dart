@@ -71,14 +71,14 @@ class ProductCard extends StatelessWidget {
               children: [
                 const Text(
                   "جـ ",
-                  style: TextStyle(fontSize: 14, color: MyColors.elsie),
+                  style: TextStyle(fontSize: 14, color: MyColors.mainColor),
                 ),
                 Text(
                   "${product.price.toString().replaceAll(RegExp(r'\.0$'), '')} ",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: MyColors.elsie,
+                    color: MyColors.mainColor,
                   ),
                 ),
                 product.oldPrice > product.price
@@ -157,7 +157,7 @@ class _LoveCountBtnState extends State<LoveCountBtn> {
         decoration: BoxDecoration(
           color:
               isFavourite
-                  ? MyColors.elsie.withOpacity(0.2)
+                  ? MyColors.mainColor.withOpacity(0.2)
                   : MyColors.matteCharcoal.withOpacity(0.07),
           borderRadius: BorderRadius.circular(100),
         ),

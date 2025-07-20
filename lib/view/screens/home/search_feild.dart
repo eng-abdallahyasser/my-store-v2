@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:store_app_v2/core/constants.dart';
 
 class SearchField extends StatelessWidget {
-  const SearchField({
-    super.key,
-  });
+  const SearchField({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +11,11 @@ class SearchField extends StatelessWidget {
         onChanged: (value) {},
         decoration: InputDecoration(
           filled: true,
-          fillColor: MyColors.elsie.withOpacity(0.1),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          fillColor: MyColors.mainColor.withOpacity(0.1),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
           border: searchOutlineInputBorder,
           focusedBorder: searchOutlineInputBorder,
           enabledBorder: searchOutlineInputBorder,

@@ -31,11 +31,12 @@ class RoundedIconBtn extends StatelessWidget {
       ),
       child: TextButton(
         style: TextButton.styleFrom(
-          foregroundColor: MyColors.elsie,
+          foregroundColor: MyColors.mainColor,
           padding: EdgeInsets.zero,
           backgroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
         ),
         onPressed: press,
         child: Icon(icon),

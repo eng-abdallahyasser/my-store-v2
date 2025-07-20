@@ -13,8 +13,12 @@ import 'components/top_rounded_container.dart';
 class DetailsScreen extends StatelessWidget {
   final Product product;
 
-  late final DetailesScreenController controller =
-      Get.put(DetailesScreenController(product: product,favouriteCount: product.favouritecount));
+  late final DetailesScreenController controller = Get.put(
+    DetailesScreenController(
+      product: product,
+      favouriteCount: product.favouritecount,
+    ),
+  );
 
   DetailsScreen({super.key, required this.product});
 
@@ -31,7 +35,7 @@ class DetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             onPressed: () {
-             Get.back();
+              Get.back();
             },
             style: ElevatedButton.styleFrom(
               shape: const CircleBorder(),
@@ -51,16 +55,18 @@ class DetailsScreen extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(right: 20),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
-                     Text(
-                     product.rating.toString(),
+                    Text(
+                      product.rating.toString(),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black,
@@ -78,26 +84,18 @@ class DetailsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          ProductImages(
-            controller: controller,
-          ),
+          ProductImages(controller: controller),
           TopRoundedContainer(
             color: Colors.white,
             child: Column(
               children: [
-                ProductDescription(
-                  product: product,
-                  pressOnSeeMore: () {},
-                ),
+                ProductDescription(product: product, pressOnSeeMore: () {}),
                 OptionChooser(options: product.options, controller: controller),
                 TopRoundedContainer(
                   color: const Color(0xFFF6F7F9),
                   child: Column(
                     children: [
-                      ColorDots(
-                        product: product,
-                        controller: controller,
-                      ),
+                      ColorDots(product: product, controller: controller),
                     ],
                   ),
                 ),
@@ -111,31 +109,34 @@ class DetailsScreen extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: GetBuilder<DetailesScreenController>(builder: (controller) {
-              return ElevatedButton(
-                onPressed: controller.addToCart,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Add   ",
-                      style: TextStyle(color: MyColors.matteCharcoal),
-                    ),
-                    Text(
-                      "${controller.numberOfItems}",
-                      style: const TextStyle(
+            child: GetBuilder<DetailesScreenController>(
+              builder: (controller) {
+                return ElevatedButton(
+                  onPressed: controller.addToCart,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Add   ",
+                        style: TextStyle(color: MyColors.matteCharcoal),
+                      ),
+                      Text(
+                        "${controller.numberOfItems}",
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 20,
-                          color: MyColors.elsie),
-                    ),
-                    const Text(
-                      "   items to Cart",
-                      style: TextStyle(color: MyColors.matteCharcoal),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                          color: MyColors.mainColor,
+                        ),
+                      ),
+                      const Text(
+                        "   items to Cart",
+                        style: TextStyle(color: MyColors.matteCharcoal),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

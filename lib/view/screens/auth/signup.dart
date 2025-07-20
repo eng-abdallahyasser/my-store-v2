@@ -17,10 +17,10 @@ class SignUpScreen extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height / 4.0,
+              height: MediaQuery.of(context).size.height / 2.5,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: MyColors.elsie,
+                color: MyColors.mainColor,
                 borderRadius: BorderRadius.vertical(
                   bottom: Radius.elliptical(
                     MediaQuery.of(context).size.width,
@@ -30,11 +30,13 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                top: 70.0,
-              ),
+              padding: const EdgeInsets.only(top: 70.0),
               child: Column(
                 children: [
+                  Image.asset("assets/images/logo.jpg",
+                    height: 100.0,
+                    width: 100.0,
+                  ),
                   const Center(
                     child: Text(
                       'SignUp',
@@ -55,17 +57,13 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Container(
                     margin: const EdgeInsets.all(20),
                     child: Material(
                       color: Colors.white,
                       elevation: 5.0,
-                      borderRadius: BorderRadius.circular(
-                        20,
-                      ),
+                      borderRadius: BorderRadius.circular(20),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
                         child: GetBuilder<SignUpController>(
@@ -73,79 +71,75 @@ class SignUpScreen extends StatelessWidget {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const SizedBox(height: 10),
                                 MyTextfield(
                                   hintText: 'Name',
                                   controller: controller.nameController,
                                   obscureText: false,
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
+                                const SizedBox(height: 20),
                                 MyTextfield(
                                   hintText: 'Email',
                                   controller: controller.emailController,
                                   obscureText: false,
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Row(children: [
-                                  Expanded(
-                                    child: MyTextfield(
-                                      hintText: 'Password',
-                                      controller: controller.pwController,
-                                      obscureText: controller.showPassword,
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: MyTextfield(
+                                        hintText: 'Password',
+                                        controller: controller.pwController,
+                                        obscureText: controller.showPassword,
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(
+                                    IconButton(
                                       onPressed: () {
                                         controller.hidePassword();
                                       },
-                                      icon:
-                                          const Icon(Icons.remove_red_eye_outlined))
-                                ]),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Row(children: [
-                                  Expanded(
-                                    child: MyTextfield(
-                                      hintText: 'Confirm password',
-                                      controller: controller.confirmPwController,
-                                      obscureText: controller.showConfirmPassword,
+                                      icon: const Icon(
+                                        Icons.remove_red_eye_outlined,
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: MyTextfield(
+                                        hintText: 'Confirm password',
+                                        controller:
+                                            controller.confirmPwController,
+                                        obscureText:
+                                            controller.showConfirmPassword,
+                                      ),
+                                    ),
+                                    IconButton(
                                       onPressed: () {
                                         controller.hideConfirmPassword();
                                       },
-                                      icon:
-                                          const Icon(Icons.remove_red_eye_outlined))
-                                ]),
-                                const SizedBox(
-                                  height: 30,
+                                      icon: const Icon(
+                                        Icons.remove_red_eye_outlined,
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 30),
                                 Center(
                                   child: GestureDetector(
                                     onTap: controller.signUp,
-                                    child: const MyButton(
-                                      text: "Sign Up",
-                                    ),
+                                    child: const MyButton(text: "Sign Up"),
                                   ),
                                 ),
                               ],
                             );
-                          }
+                          },
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +166,7 @@ class SignUpScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

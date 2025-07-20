@@ -30,59 +30,54 @@ class ProductDescription extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: GetBuilder<DetailesScreenController>(builder: (controller) {
-            return GestureDetector(
-              onTap: controller.onAddToFavouritesTap,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                // width: 48,
-                decoration: BoxDecoration(
-                  color:Repo.favouriteProducts.contains(product.id)
-                      ? const Color(0xFFFFE6E6)
-                      : const Color(0xFFF5F6F9),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
+          child: GetBuilder<DetailesScreenController>(
+            builder: (controller) {
+              return GestureDetector(
+                onTap: controller.onAddToFavouritesTap,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  // width: 48,
+                  decoration: BoxDecoration(
+                    color:
+                        Repo.favouriteProducts.contains(product.id)
+                            ? const Color(0xFFFFE6E6)
+                            : const Color(0xFFF5F6F9),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min, // Add this line
-                  children: [
-                    Text(controller.favouriteCount.toString()),
-                    const SizedBox(
-                        width:
-                            8), // Add some spacing between the text and icon if needed
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min, // Add this line
+                    children: [
+                      Text(controller.favouriteCount.toString()),
+                      const SizedBox(
+                        width: 8,
+                      ), // Add some spacing between the text and icon if needed
 
-                    SvgPicture.asset(
-                      "assets/icons/Heart Icon_2.svg",
-                      colorFilter: ColorFilter.mode(
+                      SvgPicture.asset(
+                        "assets/icons/Heart Icon_2.svg",
+                        colorFilter: ColorFilter.mode(
                           Repo.favouriteProducts.contains(product.id)
                               ? const Color(0xFFFF4848)
                               : const Color(0xFFDBDEE4),
-                          BlendMode.srcIn),
-                      height: 16,
-                    ),
-                  ],
+                          BlendMode.srcIn,
+                        ),
+                        height: 16,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 64,
-          ),
-          child: Text(
-            product.description,
-            maxLines: 3,
+              );
+            },
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 12,
-          ),
+          padding: const EdgeInsets.only(left: 20, right: 64),
+          child: Text(product.description, maxLines: 3),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: GestureDetector(
             onTap: () {},
             child: const Row(
@@ -90,18 +85,20 @@ class ProductDescription extends StatelessWidget {
                 Text(
                   "See More Detail",
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, color: MyColors.elsie),
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.mainColor,
+                  ),
                 ),
                 SizedBox(width: 5),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
-                  color: MyColors.elsie,
+                  color: MyColors.mainColor,
                 ),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

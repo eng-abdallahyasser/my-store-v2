@@ -39,22 +39,36 @@ class CartCard extends StatelessWidget {
                           product.coverImageUnit8List!,
                           fit: BoxFit.cover,
                         )
-                        : Image.network(product.imagesUrl[0],
+                        : Image.network(
+                          product.imagesUrl[0],
                           fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
+                          loadingBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                          ) {
                             if (loadingProgress == null) return child;
                             return Center(
-                                child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                            ));
+                              child: CircularProgressIndicator(
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            (loadingProgress
+                                                    .expectedTotalBytes ??
+                                                1)
+                                        : null,
+                              ),
+                            );
                           },
-                          errorBuilder: (BuildContext context, Object error,
-                              StackTrace? stackTrace) {
-                            return const Center(child: Icon(Icons.broken_image));
+                          errorBuilder: (
+                            BuildContext context,
+                            Object error,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Center(
+                              child: Icon(Icons.broken_image),
+                            );
                           },
                         ),
               ),
@@ -82,14 +96,14 @@ class CartCard extends StatelessWidget {
                   "ج.م",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: MyColors.elsie,
+                    color: MyColors.mainColor,
                   ),
                 ),
                 Text(
                   " ${product.calculateTotalCost()}",
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: MyColors.elsie,
+                    color: MyColors.mainColor,
                   ),
                 ),
                 Text(

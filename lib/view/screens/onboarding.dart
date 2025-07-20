@@ -12,28 +12,33 @@ class Onboarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: MyColors.white,
-        body: Column(
-          children: [
-            Expanded(
-              flex: 5,
-              child: PageView.builder(
-                controller: controller.pageController,
-                onPageChanged: (index) {
-                  controller.changeIndex(index);
-                },
-                itemCount: onboardingList.length,
-                itemBuilder: (context, index) =>
-                    _onboardingSection(onboardingList[index], context),
-              ),
+      backgroundColor: MyColors.white,
+      body: Column(
+        children: [
+          Expanded(
+            flex: 5,
+            child: PageView.builder(
+              controller: controller.pageController,
+              onPageChanged: (index) {
+                controller.changeIndex(index);
+              },
+              itemCount: onboardingList.length,
+              itemBuilder:
+                  (context, index) =>
+                      _onboardingSection(onboardingList[index], context),
             ),
-            Expanded(
-                flex: 2,
-                child: GetBuilder<OnboardingController>(builder: (_) {
-                  return _onboardingController();
-                }))
-          ],
-        ));
+          ),
+          Expanded(
+            flex: 2,
+            child: GetBuilder<OnboardingController>(
+              builder: (_) {
+                return _onboardingController();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _onboardingController() {
@@ -46,19 +51,21 @@ class Onboarding extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ...List.generate(
-                  onboardingList.length,
-                  (index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        width: controller.currentIndex == index ? 18 : 6,
-                        height: 6,
-                        margin: const EdgeInsets.only(right: 6),
-                        decoration: BoxDecoration(
-                          color: controller.currentIndex == index
-                              ? MyColors.elsie
-                              : MyColors.gray,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ))
+                onboardingList.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  width: controller.currentIndex == index ? 18 : 6,
+                  height: 6,
+                  margin: const EdgeInsets.only(right: 6),
+                  decoration: BoxDecoration(
+                    color:
+                        controller.currentIndex == index
+                            ? MyColors.mainColor
+                            : MyColors.gray,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
             ],
           ),
           const Spacer(),
@@ -84,22 +91,22 @@ class Onboarding extends StatelessWidget {
             onTap: controller.next,
             child: Container(
               decoration: BoxDecoration(
-                color: MyColors.elsie,
+                color: MyColors.mainColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 50.0,
-                  vertical: 8.0,
+                padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
+                child: Text(
+                  "Next",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    color: MyColors.white,
+                  ),
                 ),
-                child: Text("Next",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: MyColors.white)),
               ),
             ),
-          )
+          ),
         ],
       );
     } else {
@@ -109,26 +116,25 @@ class Onboarding extends StatelessWidget {
           GestureDetector(
             onTap: () {
               controller.onGetStarted();
-               
             },
             child: Container(
               decoration: BoxDecoration(
-                color: MyColors.elsie,
+                color: MyColors.mainColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 100.0,
-                  vertical: 8.0,
+                padding: EdgeInsets.symmetric(horizontal: 100.0, vertical: 8.0),
+                child: Text(
+                  "Start !",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    color: MyColors.white,
+                  ),
                 ),
-                child: Text("Start !",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: MyColors.white)),
               ),
             ),
-          )
+          ),
         ],
       );
     }
@@ -143,10 +149,7 @@ class Onboarding extends StatelessWidget {
           child: Image.asset(data.imageAssetPath),
         ),
         const SizedBox(height: 20),
-        Text(
-          data.title,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        Text(data.title, style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),

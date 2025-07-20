@@ -21,10 +21,11 @@ class ProfileMenu extends StatelessWidget {
         elevation: 4,
         child: TextButton(
           style: TextButton.styleFrom(
-            foregroundColor: MyColors.elsie,
+            foregroundColor: MyColors.mainColor,
             padding: const EdgeInsets.all(20),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
             backgroundColor: const Color(0xFFF5F6F9),
           ),
           onPressed: press,
@@ -33,8 +34,10 @@ class ProfileMenu extends StatelessWidget {
               SvgPicture.asset(
                 icon,
                 width: 22,
-                colorFilter:
-                    const ColorFilter.mode(MyColors.elsie, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  MyColors.mainColor,
+                  BlendMode.srcIn,
+                ),
               ),
               const SizedBox(width: 20),
               Expanded(child: Text(text)),

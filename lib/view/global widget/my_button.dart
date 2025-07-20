@@ -9,19 +9,19 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: MyColors.elsie,
+        color: MyColors.mainColor,
         borderRadius: BorderRadius.circular(16),
       ),
-      child:  Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 100.0,
-          vertical: 8.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 100.0, vertical: 8.0),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: MyColors.white,
+          ),
         ),
-        child: Text(text,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: MyColors.white)),
       ),
     );
   }
