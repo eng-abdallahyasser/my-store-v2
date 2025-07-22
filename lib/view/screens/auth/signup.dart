@@ -34,8 +34,9 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset("assets/images/logo.jpg",
-                    height: 100.0,
-                    width: 100.0,
+                    height: 120,
+                    width: 200,
+                    fit: BoxFit.cover,
                   ),
                   const Center(
                     child: Text(
@@ -159,7 +160,7 @@ class SignUpScreen extends StatelessWidget {
                             "Sign In Now",
                             style: TextStyle(
                               fontSize: 18.0,
-                              color: Color(0xff7f30fe),
+                              color: Colors.blue,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

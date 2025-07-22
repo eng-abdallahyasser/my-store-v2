@@ -35,8 +35,9 @@ class SignInScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset("assets/images/logo.jpg",
-                    height: 100.0,
-                    width: 100.0,
+                    height: 120,
+                    width: 200,
+                    fit: BoxFit.cover,
                   ),
                   const Center(
                     child: Text(

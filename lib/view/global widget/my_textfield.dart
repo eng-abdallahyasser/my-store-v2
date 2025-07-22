@@ -25,7 +25,7 @@ class MyTextfield extends StatelessWidget {
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: MyColors.matteCharcoal.withOpacity(0.4),
+              color: MyColors.secondaryColor,
             ),
             borderRadius: BorderRadius.circular(30),
           ),
@@ -37,9 +37,8 @@ class MyTextfield extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Text(hintText),
           ),
-          hintStyle: TextStyle(
-            fontWeight: FontWeight.w400,
-            color: MyColors.matteCharcoal.withOpacity(0.4),
+          labelStyle: TextStyle(
+            color: MyColors.matteCharcoal.withOpacity(0.6),
           ),
         ),
         obscureText: obscureText,
