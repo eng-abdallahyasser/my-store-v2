@@ -15,8 +15,8 @@ class ProductList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: title == "Popular Products"
-            ? Repo.getPopularProducts()
-            : Repo.getProductsByCategory(title),
+            ? Repo.product.getPopularProducts()
+            : Repo.product.getProductsByCategory(title),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(

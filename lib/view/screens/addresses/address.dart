@@ -21,7 +21,7 @@ class AddressScreen extends StatelessWidget {
             GetBuilder<AddressController>(
               builder: (context) {
                 return FutureBuilder(
-                  future: Repo.getAddresses(),
+                  future: Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(

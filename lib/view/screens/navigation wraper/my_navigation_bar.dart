@@ -8,15 +8,21 @@ import 'package:store_app_v2/data/model/bottom_bar_destination.dart';
 
 class MyNavigationBarWraper extends StatelessWidget {
   final NavigationBarController controller = Get.put(NavigationBarController());
+  
   MyNavigationBarWraper({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: controller.selectedIndex,
-        children:
-            bottomBarDestinations.map((destination) => destination.routeWidget).toList(),
+      body: GetBuilder<NavigationBarController>(
+        builder: (controller) {
+          return IndexedStack(
+            index: controller.selectedIndex,
+            children: bottomBarDestinations
+                .map((destination) => destination.routeWidget)
+                .toList(),
+          );
+        },
       ),
       bottomNavigationBar: GetBuilder<NavigationBarController>(
         builder:

@@ -52,11 +52,11 @@ class DetailesScreenController extends GetxController {
     if (!Repo.favouriteProducts.contains(product.id)) {
       Repo.favouriteProducts.add(product.id);
       favouriteCount++;
-      Repo.addToFavorites(product.id);
+      Repo.favorites.addToFavorites(product.id, Repo.auth.getCurrentUser()!.uid);
     } else {
       favouriteCount--;
       Repo.favouriteProducts.remove(product.id);
-      Repo.removeFromFavorites(product.id);
+      Repo.favorites.removeFromFavorites(product.id, Repo.auth.getCurrentUser()!.uid);
     }
     update();
   }

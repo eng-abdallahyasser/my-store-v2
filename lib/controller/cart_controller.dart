@@ -31,7 +31,7 @@ class CartController extends GetxController {
   }
 
   void getAddresses() async {
-    addresses = await Repo.getAddresses();
+    addresses = await Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid);
   }
 
   void calculateTotal() {
@@ -110,7 +110,7 @@ class CartController extends GetxController {
     );
 
     //saving order ....
-    await Repo.addOrder(order);
+    await Repo.order.addOrder(order);
 
     cartList.clear();
     update(); // this update is not working i dont know why?
@@ -136,7 +136,7 @@ class CartController extends GetxController {
         ],
       ),
     );
-    List<Address> addresses = await Repo.getAddresses();
+    List<Address> addresses = await Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid);
     if (addresses.isEmpty) {
       Get.back();
       Get.snackbar(

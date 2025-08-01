@@ -27,7 +27,7 @@ class FavouritesScreen extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) =>
                     FutureBuilder(
-                      future: Repo.getProductById(Repo.favouriteProducts[index]),
+                      future: Repo.product .getProductById(Repo.favouriteProducts[index]),
 
                       builder: (context,snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {

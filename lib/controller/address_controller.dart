@@ -73,7 +73,7 @@ class AddressController extends GetxController {
     } else {
       newAddress.address = addressController.text;
       newAddress.phoneNumber = phoneController.text;
-      await Repo.addAddress(newAddress);
+      await Repo.address.addAddress(newAddress);
       Get.back();
       Get.back();
       update();

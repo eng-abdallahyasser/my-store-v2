@@ -137,10 +137,10 @@ class _LoveCountBtnState extends State<LoveCountBtn> {
     if (isFavourite) {
       Repo.favouriteProducts.add(widget.product.id);
       widget.product.favouritecount;
-      await Repo.addToFavorites(widget.product.id);
+      await Repo.favorites.addToFavorites(widget.product.id, Repo.auth.getCurrentUser()!.uid);
     } else {
       Repo.favouriteProducts.remove(widget.product.id);
-      await Repo.removeFromFavorites(widget.product.id);
+      await Repo.favorites.removeFromFavorites(widget.product.id, Repo.auth.getCurrentUser()!.uid);
     }
 
     setState(() {
