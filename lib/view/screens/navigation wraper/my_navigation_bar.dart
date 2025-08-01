@@ -13,13 +13,10 @@ class MyNavigationBarWraper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: controller.pageController,
+      body: IndexedStack(
+        index: controller.selectedIndex,
         children:
-            bottomBarDestinations
-                .map((destination) => destination.routeWidget)
-                .toList(),
+            bottomBarDestinations.map((destination) => destination.routeWidget).toList(),
       ),
       bottomNavigationBar: GetBuilder<NavigationBarController>(
         builder:
