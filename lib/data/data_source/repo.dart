@@ -1,11 +1,12 @@
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:store_app_v2/data/data_source/address_repository.dart';
 import 'package:store_app_v2/data/data_source/auth_repository.dart';
 import 'package:store_app_v2/data/data_source/favorites_repository.dart';
 import 'package:store_app_v2/data/data_source/order_repository.dart';
 import 'package:store_app_v2/data/data_source/product_repository.dart';
 import 'package:store_app_v2/data/model/product.dart';
-import 'package:store_app_v2/data/model/cart_item.dart';
+import 'package:store_app_v2/data/model/restaurant_status.dart';
 import 'package:store_app_v2/firebase/storage_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,8 +16,9 @@ class Repo {
   static final AuthRepository auth = AuthRepository();
   static final AddressRepository address = AddressRepository();
   static final FavoritesRepository favorites = FavoritesRepository();
-
   static final StorageServices _storage = StorageServices();
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
 
   static var prefs;
   static bool onboardingShown = false;
@@ -25,7 +27,7 @@ class Repo {
   Map<String, dynamic>? delivaryData = {};
   static List<Product> fetchedProducts = [];
   static bool isProductsFetched = false;
-  static List<CartItem> demoCarts = [];
+  
   static List<Map<String, dynamic>> testProducts = [];
 
   static Future<void> init() async {
@@ -50,5 +52,21 @@ class Repo {
     }
     // If not fetched, return a default product or handle the error as needed
     throw Exception("Product not found in fetched products.");
+  }
+
+  Future<RestaurantStatus?> fetchRestaurantStatus() async {
+    try {
+      DocumentSnapshot doc = await _firestore
+          .collection('status')
+          .doc('main_restaurant') // Replace with your restaurant ID
+          .get();
+      
+      if (doc.exists) {
+        return RestaurantStatus.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      } 
+    } catch (e) {
+      return RestaurantStatus(id: '', name: '', isOpen: false, closedMessage: 'Error fetching data', openingHours: {});
+    }
+    return null; 
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:store_app_v2/controller/cart_controller.dart';
 import 'package:store_app_v2/controller/navigation_bar_controller.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/option.dart';
@@ -17,6 +18,7 @@ class DetailesScreenController extends GetxController {
   List<bool> isImagesLoaded = [false, false, false, false, false];
   bool isCoverImageLoaded = false;
   int favouriteCount = 0;
+  CartController cartController = Get.find<CartController>();
 
   DetailesScreenController({required this.product, this.favouriteCount = 0});
 
@@ -101,7 +103,7 @@ class DetailesScreenController extends GetxController {
       return;
     }
 
-    Repo.demoCarts.add(
+    cartController.addToCart(
       CartItem(
         totalPrice: product.calculateTotalCost() * numberOfItems,
         unitPrice: product.calculateTotalCost(),

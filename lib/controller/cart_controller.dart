@@ -5,13 +5,13 @@ import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/address.dart';
 import 'package:store_app_v2/data/model/cart_item.dart';
 import 'package:store_app_v2/data/model/my_order.dart';
+import 'package:store_app_v2/data/model/restaurant_status.dart';
 import 'package:store_app_v2/view/screens/addresses/address.dart';
 
 class CartController extends GetxController {
-  List<CartItem> cartList = Repo.demoCarts;
+  List<CartItem> cartList = [];
   double total = 0.0;
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  RestaurantStatus? status;
   List<Address> addresses = [];
   Address selectedAddress = Address(
     userId: "userId",
@@ -27,11 +27,19 @@ class CartController extends GetxController {
   void onInit() async {
     calculateTotal();
     getAddresses();
+    status = await Repo().fetchRestaurantStatus();
     super.onInit();
   }
 
   void getAddresses() async {
-    addresses = await Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid);
+    addresses = await Repo.address.getAddresses(
+      Repo.auth.getCurrentUser()!.uid,
+    );
+  }
+
+  void addToCart(CartItem cartItem) {
+    cartList.add(cartItem);
+    calculateTotal();
   }
 
   void calculateTotal() {
@@ -44,7 +52,7 @@ class CartController extends GetxController {
 
   void removeOneProduct(int index) {
     if (cartList[index].quantity > 1) {
-      cartList[index]= cartList[index].copyWith(
+      cartList[index] = cartList[index].copyWith(
         quantity: cartList[index].quantity - 1,
         totalPrice: cartList[index].totalPrice - cartList[index].unitPrice,
       );
@@ -75,7 +83,7 @@ class CartController extends GetxController {
   }
 
   void addOneProduct(int index) {
-    cartList[index]= cartList[index].copyWith(
+    cartList[index] = cartList[index].copyWith(
       quantity: cartList[index].quantity + 1,
       totalPrice: cartList[index].totalPrice + cartList[index].unitPrice,
     );
@@ -101,9 +109,9 @@ class CartController extends GetxController {
       customerPhone: selectedAddress.phoneNumber,
       shippingAddress: selectedAddress.addressId,
       items: cartList,
-      total:total,
+      total: total,
       status: "Pending",
-      createdAt:Timestamp.now(),
+      createdAt: Timestamp.now(),
       paymentStatus: "unpaid",
       customerName: "customerName",
       customerEmail: "customerEmail",
@@ -124,7 +132,7 @@ class CartController extends GetxController {
     );
   }
 
-  void placeOreder() async {
+  void placeOrder() async {
     // add progress indcator here
     Get.defaultDialog(
       title: "Saving Your Order",
@@ -132,25 +140,43 @@ class CartController extends GetxController {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text("laoding"),
+          Text("Loading"),
         ],
       ),
     );
-    List<Address> addresses = await Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid);
+    List<Address> addresses = await Repo.address.getAddresses(
+      Repo.auth.getCurrentUser()!.uid,
+    );
     if (addresses.isEmpty) {
-      Get.back();
-      Get.snackbar(
-        "Error",
-        "Please add your address first",
-        duration: const Duration(seconds: 10),
+      Get.back(); // close previous dialog/page if open
+      Get.defaultDialog(
+        title: "Error",
+        middleText: "Please add your address first",
+        textConfirm: "OK",
+        onConfirm: () {
+          Get.back(); // close the dialog
+          Get.to(() => AddressScreen()); // navigate after closing
+        },
       );
-      Get.to(() => AddressScreen());
     } else if (selectedAddress.latitude == 0) {
       Get.back();
-      Get.snackbar(
-        "Error",
-        "Please select your address first",
-        duration: const Duration(seconds: 10),
+      Get.defaultDialog(
+        title: "Error",
+        middleText: "Please select your address first",
+        textConfirm: "OK",
+        onConfirm: () {
+          Get.back(); // close the dialog only
+        },
+      );
+    } else if (status != null && !status!.isOpen) {
+      Get.back();
+      Get.defaultDialog(
+        title: "Error",
+        middleText: "Restaurant is currently closed",
+        textConfirm: "OK",
+        onConfirm: () {
+          Get.back(); // close the dialog
+        },
       );
     } else {
       Get.back();

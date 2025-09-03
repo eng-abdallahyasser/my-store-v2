@@ -95,4 +95,12 @@ class ProductRepository extends BaseRepository {
       rethrow;
     }
   }
+
+  Product getFetchedProductById(String productId) {
+    if (isProductsFetched) {
+      return fetchedProducts.firstWhere((element) => element.id == productId);
+    }
+    // If not fetched, return a default product or handle the error as needed
+    throw Exception("Product not found in fetched products.");
+  }
 }

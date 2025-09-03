@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -11,10 +13,13 @@ import 'package:store_app_v2/view/screens/cart/cart_card.dart';
 class CartScreen extends StatelessWidget {
   final CartController controller = Get.put(CartController());
 
+  
+
   CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    log("controller.cartList.length.toString()");
     return GetBuilder<CartController>(
       builder: (controller) {
         controller.calculateTotal();
@@ -46,7 +51,7 @@ class CartScreen extends StatelessWidget {
                                     vertical: 10,
                                   ),
                                   child: CartCard(
-                                    product: Repo.getFetchedProductById(
+                                    product: Repo.product.getFetchedProductById(
                                       controller.cartList[index].productId,
                                     ),
                                     cart: controller.cartList[index],
