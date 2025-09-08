@@ -11,7 +11,7 @@ import 'package:store_app_v2/view/screens/addresses/address.dart';
 class CartController extends GetxController {
   List<CartItem> cartList = [];
   double total = 0.0;
-  RestaurantStatus? status;
+
   List<Address> addresses = [];
   Address selectedAddress = Address(
     userId: "userId",
@@ -27,7 +27,6 @@ class CartController extends GetxController {
   void onInit() async {
     calculateTotal();
     getAddresses();
-    status = await Repo().fetchRestaurantStatus();
     super.onInit();
   }
 
@@ -132,6 +131,100 @@ class CartController extends GetxController {
     );
   }
 
+  bool isRestaurantOpen(RestaurantStatus? status) {
+    if (status == null) {
+      return false;
+    }
+    if (!status.autoMode) {
+      return status.isOpen;
+    }
+    // Auto mode: determine based on openingHours
+    DateTime now = DateTime.now();
+    List<String> days = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
+
+    // Dart weekday: 1 Mon ... 7 Sun
+    int todayIndex = now.weekday - 1; // 0..6
+    int yesterdayIndex = (todayIndex - 1) < 0 ? 6 : todayIndex - 1;
+
+    Map<String, dynamic>? getDayConfig(int index) {
+      var key = days[index];
+      var value = status.openingHours[key];
+      if (value is Map<String, dynamic>) return value;
+      if (value is Map) return Map<String, dynamic>.from(value);
+      return null;
+    }
+
+    DateTime timeOnDay(DateTime baseDate, String hhmm) {
+      List<String> parts = hhmm.split(':');
+      int hour = parts.isNotEmpty ? int.tryParse(parts[0]) ?? 0 : 0;
+      int minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+      return DateTime(
+        baseDate.year,
+        baseDate.month,
+        baseDate.day,
+        hour,
+        minute,
+      );
+    }
+
+    bool isWithinWindow(
+      DateTime current,
+      DateTime openTime,
+      DateTime closeTime,
+    ) {
+      if (closeTime.isBefore(openTime) ||
+          closeTime.isAtSameMomentAs(openTime)) {
+        // Overnight: close on next day
+        closeTime = closeTime.add(const Duration(days: 1));
+        if (current.isBefore(openTime)) {
+          // If current after midnight but before openTime same-day, interpret current as next day
+          current = current.add(const Duration(days: 1));
+        }
+      }
+      return (current.isAtSameMomentAs(openTime) ||
+              current.isAfter(openTime)) &&
+          current.isBefore(closeTime);
+    }
+
+    // Check today's window
+    var todayCfg = getDayConfig(todayIndex);
+    if (todayCfg != null && (todayCfg['enabled'] ?? false) == true) {
+      String openStr = (todayCfg['open'] ?? '00:00').toString();
+      String closeStr = (todayCfg['close'] ?? '00:00').toString();
+      DateTime openTime = timeOnDay(now, openStr);
+      DateTime closeTime = timeOnDay(now, closeStr);
+      if (isWithinWindow(now, openTime, closeTime)) {
+        return true;
+      }
+    }
+
+    // Also check if yesterday had an overnight window spilling into today
+    var yCfg = getDayConfig(yesterdayIndex);
+    if (yCfg != null && (yCfg['enabled'] ?? false) == true) {
+      String openStr = (yCfg['open'] ?? '00:00').toString();
+      String closeStr = (yCfg['close'] ?? '00:00').toString();
+      DateTime yDate = now.subtract(const Duration(days: 1));
+      DateTime openTime = timeOnDay(yDate, openStr);
+      DateTime closeTime = timeOnDay(yDate, closeStr);
+      if (closeTime.isBefore(openTime) ||
+          closeTime.isAtSameMomentAs(openTime)) {
+        if (isWithinWindow(now, openTime, closeTime)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   void placeOrder() async {
     // add progress indcator here
     Get.defaultDialog(
@@ -147,6 +240,7 @@ class CartController extends GetxController {
     List<Address> addresses = await Repo.address.getAddresses(
       Repo.auth.getCurrentUser()!.uid,
     );
+    RestaurantStatus? status = await Repo().fetchRestaurantStatus();
     if (addresses.isEmpty) {
       Get.back(); // close previous dialog/page if open
       Get.defaultDialog(
@@ -168,11 +262,11 @@ class CartController extends GetxController {
           Get.back(); // close the dialog only
         },
       );
-    } else if (status != null && !status!.isOpen) {
+    } else if (!isRestaurantOpen(status)) {
       Get.back();
       Get.defaultDialog(
         title: "Error",
-        middleText: "Restaurant is currently closed",
+        middleText: status?.closedMessage ?? "Restaurant is closed",
         textConfirm: "OK",
         onConfirm: () {
           Get.back(); // close the dialog

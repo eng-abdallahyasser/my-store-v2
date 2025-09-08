@@ -65,7 +65,7 @@ class Repo {
         return RestaurantStatus.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       } 
     } catch (e) {
-      return RestaurantStatus(id: '', name: '', isOpen: false, closedMessage: 'Error fetching data', openingHours: {});
+      return RestaurantStatus(autoMode: false, id: '', name: '', isOpen: false, closedMessage: 'Error fetching data', openingHours: {});
     }
     return null; 
   }
