@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:store_app_v2/core/constants.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:store_app_v2/features/banner/controllers/banner_controller.dart';
 
@@ -33,7 +34,7 @@ class BannerView extends StatelessWidget {
       final Size size = MediaQuery.of(context).size;
       return Container(
         width: size.width,
-        height: size.width * 0.45,
+        height: size.width * 0.5,
         padding: const EdgeInsets.only(top: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,7 +103,7 @@ class BannerView extends StatelessWidget {
                   child: index == bannerController.currentIndex
                       ? Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
+                            color: MyColors.mainColor,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),

@@ -1,46 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:store_app_v2/view/global%20widget/section_title.dart';
-
+import 'package:get/get.dart';
+import 'package:store_app_v2/features/category/controllers/category_controller.dart';
 
 class SpecialOffers extends StatelessWidget {
-  const SpecialOffers({
-    super.key,
-  });
+  const SpecialOffers({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SectionTitle(
-            title: "Special for you",
-            press: () {},
-          ),
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              SpecialOfferCard(
-                image: "assets/images/banner.jpg",
-                category: "فطــــايـــر",
-                numOfBrands: 18,
-                press: () {
-                },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 3.png",
-                category: "Fashion",
-                numOfBrands: 24,
-                press: () {
-                },
-              ),
-              const SizedBox(width: 20),
-            ],
-          ),
-        ),
-      ],
+    return GetX<CategoryController>(
+      builder: (controller) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SectionTitle(title: "Menus", press: () {}),
+            ),
+            SizedBox(
+              height: 90,
+              child:
+                  controller.isLoading.value
+                      ? const Center(child: CircularProgressIndicator())
+                      : controller.errorMessage.value != null
+                      ? Center(child: Text(controller.errorMessage.value!))
+                      : controller.categories.isEmpty
+                      ? const Center(child: Text("No Menus available"))
+                      : ListView.separated(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final item = controller.categories[index];
+                          return SpecialOfferCard(
+                            image: item.image,
+                            category: item.name,
+                            numOfBrands: 0,
+                            press: () {},
+                          );
+                        },
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        itemCount: controller.categories.length,
+                      ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -71,10 +74,7 @@ class SpecialOfferCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                ),
+                _CategoryImage(image: image),
                 Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -115,6 +115,37 @@ class SpecialOfferCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CategoryImage extends StatelessWidget {
+  final String image;
+  const _CategoryImage({required this.image});
+
+  @override
+  Widget build(BuildContext context) {
+    if (image.startsWith('assets/')) {
+      return Image.asset(
+        image,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+    return Image.network(
+      image,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (_, __, ___) => Container(color: Colors.grey.shade300),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          color: Colors.grey.shade200,
+          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        );
+      },
     );
   }
 }
