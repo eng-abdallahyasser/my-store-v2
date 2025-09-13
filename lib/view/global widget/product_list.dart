@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/view/global%20widget/product_card.dart';
 import 'package:store_app_v2/view/global%20widget/section_title.dart';
+import 'package:store_app_v2/view/screens/products/category_products_screen.dart';
 
 class ProductList extends StatelessWidget {
   final String title;
@@ -53,7 +55,9 @@ class ProductListWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: SectionTitle(
             title: title,
-            press: () {},
+            press: () {
+              Get.to(() => CategoryProductsScreen(categoryTitle: title));
+            },
           ),
         ),
         SingleChildScrollView(
@@ -62,12 +66,12 @@ class ProductListWidget extends StatelessWidget {
               children: List.generate(
                 products.length,
                 (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 12),
-                      child: ProductCard(
-                        product: products[index],
-                      ),
-                    );
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
+                    child: ProductCard(
+                      product: products[index],
+                    ),
+                  );
                 },
               ),
             )),
