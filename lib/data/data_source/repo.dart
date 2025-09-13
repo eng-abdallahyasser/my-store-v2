@@ -69,4 +69,18 @@ class Repo {
     }
     return null; 
   }
+
+  // Submit suggestion or complaint to Firestore
+  static Future<void> submitFeedback({
+    required String userId,
+    required String type, // 'Suggestion' or 'Complaint'
+    required String message,
+  }) async {
+    await _firestore.collection('feedback').add({
+      'userId': userId,
+      'type': type,
+      'message': message,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
 }

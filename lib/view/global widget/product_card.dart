@@ -19,6 +19,12 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine the price to display: if base product price is 0, fallback to first variant's price
+    final double displayPrice = (product.price != 0)
+        ? product.price
+        : ((product.options.isNotEmpty && product.options.first.variants.isNotEmpty)
+            ? product.options.first.variants.first.price
+            : 0.0);
     return SizedBox(
       width: width,
       child: GestureDetector(
@@ -69,19 +75,21 @@ class ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (displayPrice != 0)
                 const Text(
                   "جـ ",
                   style: TextStyle(fontSize: 14, color: MyColors.mainColor),
                 ),
+                if (displayPrice != 0)
                 Text(
-                  "${product.price.toString().replaceAll(RegExp(r'\.0$'), '')} ",
+                  "${displayPrice.toString().replaceAll(RegExp(r'\.0$'), '')} ",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: MyColors.mainColor,
                   ),
                 ),
-                product.oldPrice > product.price
+                product.oldPrice > displayPrice
                     ? Text(
                       " ${product.oldPrice.toString().replaceAll(RegExp(r'\.0$'), '')} ",
                       style: const TextStyle(

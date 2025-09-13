@@ -5,6 +5,7 @@ import 'package:store_app_v2/view/screens/addresses/address.dart';
 import 'package:store_app_v2/view/screens/orders/orders_list_screen.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_menu.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_pic.dart';
+import 'package:store_app_v2/view/screens/support/feedback_screen.dart';
 
 class Profile extends StatelessWidget {
   final ProfileController controller = Get.put(ProfileController());
@@ -54,9 +55,11 @@ class Profile extends StatelessWidget {
               press: () {},
             ),
             ProfileMenu(
-              text: "Help Center",
+              text: "Suggestions & Complaints",
               icon: "assets/icons/Question mark.svg",
-              press: () {},
+              press: () {
+                Get.to(() => const FeedbackScreen());
+              },
             ),
             ProfileMenu(
               text: "Log Out",
