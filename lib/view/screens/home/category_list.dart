@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:store_app_v2/view/global%20widget/section_title.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/features/category/controllers/category_controller.dart';
+import 'package:store_app_v2/view/screens/products/category_products_screen.dart';
 
-class SpecialOffers extends StatelessWidget {
-  const SpecialOffers({super.key});
+class CategoryList extends StatelessWidget {
+  const CategoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +27,17 @@ class SpecialOffers extends StatelessWidget {
                       : controller.categories.isEmpty
                       ? const Center(child: Text("No Menus available"))
                       : ListView.separated(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        padding: const EdgeInsets.only(right: 20),
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final item = controller.categories[index];
-                          return SpecialOfferCard(
+                          return CategoryCard(
                             image: item.image,
                             category: item.name,
                             numOfBrands: 0,
-                            press: () {},
+                            press: () {
+                              Get.to(() => CategoryProductsScreen(categoryTitle: item.name));
+                            },
                           );
                         },
                         separatorBuilder: (_, __) => const SizedBox(width: 12),
@@ -48,8 +51,8 @@ class SpecialOffers extends StatelessWidget {
   }
 }
 
-class SpecialOfferCard extends StatelessWidget {
-  const SpecialOfferCard({
+class CategoryCard extends StatelessWidget {
+  const CategoryCard({
     super.key,
     required this.category,
     required this.image,
