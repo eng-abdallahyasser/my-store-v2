@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:501773870758:android:edef733ab955416c723667",
+        "mobilesdk_app_id": "1:501773870758:android:116af951aa899549723667",
         "android_client_info": {
-          "package_name": "com.example.my_store"
+          "package_name": "com.example.store_app_v2"
         }
       },
       "oauth_client": [],
@@ -45,9 +45,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:501773870758:android:116af951aa899549723667",
+        "mobilesdk_app_id": "1:501773870758:android:f7db28f35c695419723667",
         "android_client_info": {
-          "package_name": "com.example.store_app_v2"
+          "package_name": "com.wesaya.fooddelivaryapp"
         }
       },
       "oauth_client": [],

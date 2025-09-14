@@ -30,7 +30,7 @@ class SignUpController extends GetxController {
         confirmPwController.text.isNotEmpty) {
       if (pwController.text == confirmPwController.text) {
         Get.dialog(const AlertDialog(
-          title: Text('Signing Up...'),
+          title: Text('جاري إنشاء الحساب...'),
           content: SizedBox(
             height: 100,
             child: Center(child: CircularProgressIndicator()),
@@ -44,32 +44,32 @@ class SignUpController extends GetxController {
         }
         if (massage == 'weak-password') {
           Get.defaultDialog(
-            title: 'Error',
-            middleText: 'اجتهد شوية و خلي الباسورد اطول من كدة شوية',
+            title: 'خطأ',
+            middleText: 'كلمة المرور ضعيفة. يرجى اختيار كلمة مرور أقوى.',
           );
         }
         if (massage == 'invalid-email') {
-      Get.defaultDialog(
-        title: 'Error',
-        middleText: 'دا مش شكل ايميل يا واجهة',
-      );
-    }
+          Get.defaultDialog(
+            title: 'خطأ',
+            middleText: 'البريد الإلكتروني غير صالح. يرجى إدخال بريد إلكتروني صحيح.',
+          );
+        }
         if (massage == 'email-already-in-use') {
           Get.defaultDialog(
-            title: 'Error',
-            middleText: 'الايميل دا حد تاني مستخدمه او انت نسيت الباسورد بتاعه',
+            title: 'خطأ',
+            middleText: 'هذا البريد الإلكتروني مستخدم بالفعل. إذا نسيت كلمة المرور، يرجى محاولة الاستعادة.',
           );
         }
       } else {
         Get.defaultDialog(
-          title: 'Error',
-          middleText: 'Password and Confirm Password are not the same',
+          title: 'خطأ',
+          middleText: 'كلمة المرور وتأكيدها غير متطابقين.',
         );
       }
     } else {
       Get.defaultDialog(
-        title: 'Error',
-        middleText: 'Please fill all the fields',
+        title: 'خطأ',
+        middleText: 'يرجى ملء جميع الحقول.',
       );
     }
     

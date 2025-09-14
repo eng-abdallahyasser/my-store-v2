@@ -1,4 +1,4 @@
-package com.example.admin_my_store
+package com.wesaya.fooddelivaryapp
 
 import io.flutter.embedding.android.FlutterActivity
 

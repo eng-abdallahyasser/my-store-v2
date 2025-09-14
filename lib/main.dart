@@ -34,12 +34,23 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 16, color: MyColors.gray),
         ),
       ),
+      // Ensure all screens respect bottom system insets (Android nav bar)
+      // while keeping AppBars aligned with the status bar area.
+      builder: (context, child) {
+        if (child == null) return const SizedBox.shrink();
+        return SafeArea(
+          top: false, // AppBar already handles top insets
+          bottom: true, // prevent content from going under system nav bar
+          child: child,
+        );
+      },
       initialRoute: MyRoutes.splashScreen,
       getPages: AppPages.routes,
       // routes: routes,
     );
   }
 }
+
 void uploadProducts() async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   for (var product in Repo.testProducts) {
@@ -48,4 +59,4 @@ void uploadProducts() async {
 
   log("✅ Products uploaded successfully!");
 
-  }
+}

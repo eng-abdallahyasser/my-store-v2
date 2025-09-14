@@ -99,7 +99,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     backgroundColor: MyColors.mainColor,
                   ),
                   onPressed: _submit,
-                  child: const Text('Send'),
+                  child: const Text('Send',style: TextStyle(color: Colors.white),),
                 ),
               ),
               const SizedBox(height: 8),
@@ -114,7 +114,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     icon: const Icon(Icons.person_outline, size: 16),
                     label: const Text(
                       'About developer',
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 12 ,color: Colors.black),
                     ),
                   ),
                 ],

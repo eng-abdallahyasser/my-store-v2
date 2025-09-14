@@ -18,12 +18,12 @@ class SignInController extends GetxController {
   Future<void> signIn() async {
     if (emailController.text.isEmpty || pwController.text.isEmpty) {
       Get.defaultDialog(
-        title: 'Error',
-        middleText: 'Please fill all the fields',
+        title: 'خطأ',
+        middleText: 'يرجى ملء جميع الحقول.',
       );
     } else {
       Get.dialog(const AlertDialog(
-        title: Text('Signing In...'),
+        title: Text('جاري تسجيل الدخول...'),
         content: SizedBox(
           height: 100,
           child: Center(child: CircularProgressIndicator()),
@@ -37,14 +37,14 @@ class SignInController extends GetxController {
       }
       if (massage == 'invalid-email') {
         Get.defaultDialog(
-          title: 'Error',
-          middleText: 'دا مش شكل ايميل يا واجهة',
+          title: 'خطأ',
+          middleText: 'البريد الإلكتروني غير صالح. يرجى إدخال بريد إلكتروني صحيح.',
         );
       }
       if (massage == 'invalid-credential') {
         Get.defaultDialog(
-          title: 'Error',
-          middleText: 'جدع، نسيت الباسورد ولا الأيميل ولا كتبتهم غلط ؟',
+          title: 'خطأ',
+          middleText: 'بيانات الاعتماد غير صحيحة. يرجى التحقق من البريد الإلكتروني وكلمة المرور.',
         );
       }
     }
