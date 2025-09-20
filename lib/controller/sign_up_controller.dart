@@ -12,6 +12,7 @@ class SignUpController extends GetxController {
   TextEditingController confirmPwController = TextEditingController();
   bool showPassword = false;
   bool showConfirmPassword = false;
+  bool agreeToTerms = false;
 
   void hidePassword() {
     showPassword = !showPassword;
@@ -23,7 +24,19 @@ class SignUpController extends GetxController {
     update();
   }
 
+  void toggleAgreeToTerms(bool? value) {
+    agreeToTerms = value ?? false;
+    update();
+  }
+
   Future<void> signUp() async {
+    if (!agreeToTerms) {
+      Get.defaultDialog(
+        title: 'الشروط والأحكام',
+        middleText: 'يجب الموافقة على الشروط والأحكام لإنشاء حساب.',
+      );
+      return;
+    }
     if (nameController.text.isNotEmpty &&
         emailController.text.isNotEmpty &&
         pwController.text.isNotEmpty &&

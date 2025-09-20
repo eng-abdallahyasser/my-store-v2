@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
+import 'package:store_app_v2/controller/cart_controller.dart';
 import 'package:store_app_v2/data/model/address.dart';
 import 'package:store_app_v2/view/screens/addresses/address_detailes.dart';
 import 'package:store_app_v2/view/screens/addresses/new_address.dart';
@@ -24,7 +25,7 @@ class AddressController extends GetxController {
 
   addNewAddress() async {
     Get.defaultDialog(
-        title: 'Finding your location',
+        title: 'جاري تحديد موقعك...',
         content: const CircularProgressIndicator());
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -34,9 +35,9 @@ class AddressController extends GetxController {
     if (permission == LocationPermission.deniedForever) {
       Get.back();
       Get.defaultDialog(
-        title: 'ERROR',
+        title: 'خطأ',
         content: const Text(
-            'Location Permission are permanently denied, we cannot request permission again but you can check permissions by going to settings > apps > permissions'),
+            'تم رفض إذن الموقع بشكل دائم، لا يمكننا طلب الإذن مرة أخرى. يمكنك تعديل الأذونات من الإعدادات > التطبيقات > الأذونات.'),
       );
     }
     await Geolocator.getCurrentPosition().then((value) {
@@ -53,27 +54,39 @@ class AddressController extends GetxController {
 
   void onSaveNewAddressClicked(Address newAddress) async {
     Get.defaultDialog(
-      title: 'Saving',
+      title: 'جاري الحفظ...',
       content: const CircularProgressIndicator(),
     );
     if (addressController.text.length < 12) {
       Get.back();
       Get.defaultDialog(
-        title: 'ERROR',
-        content: const Text('Please, enter a valid address'),
+        title: 'خطأ',
+        content: const Text('يرجى إدخال عنوان صحيح'),
       );
     } else if (phoneController.text.length != 11 ||
         !phoneController.text.startsWith('01')) {
       Get.back();
       Get.defaultDialog(
-        title: 'ERROR',
+        title: 'خطأ',
         content: const Text(
-            'Please, enter a valid phone number, it should be 11 digits and start with 01. \n For example: 01XXXXXXXXX.'),
+            'يرجى إدخال رقم هاتف صحيح، يجب أن يكون 11 رقمًا ويبدأ بـ 01.\n مثال: 01XXXXXXXXX.'),
       );
     } else {
       newAddress.address = addressController.text;
       newAddress.phoneNumber = phoneController.text;
-      await Repo.address.addAddress(newAddress);
+      // Set the real userId before saving
+      final user = Repo.auth.getCurrentUser();
+      if (user != null) {
+        newAddress.userId = user.uid;
+      }
+      final newId = await Repo.address.addAddress(newAddress);
+      newAddress.addressId = newId;
+      // Refresh cart addresses and select the newly added one if CartController is active
+      if (Get.isRegistered<CartController>()) {
+        final cart = Get.find<CartController>();
+        await cart.getAddresses();
+        cart.selectAddress(newAddress);
+      }
       Get.back();
       Get.back();
       update();

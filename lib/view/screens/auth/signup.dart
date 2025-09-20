@@ -5,6 +5,7 @@ import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/view/global%20widget/my_button.dart';
 import 'package:store_app_v2/view/global%20widget/my_textfield.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
+import 'package:store_app_v2/view/screens/support/terms_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   final SignUpController controller = Get.put(SignUpController());
@@ -127,6 +128,37 @@ class SignUpScreen extends StatelessWidget {
                                   ],
                                 ),
                                 const SizedBox(height: 30),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Checkbox(
+                                      value: controller.agreeToTerms,
+                                      checkColor: Colors.white,
+                                      activeColor: MyColors.mainColor,
+                                      onChanged: controller.toggleAgreeToTerms,
+                                    ),
+                                    Expanded(
+                                      child: Wrap(
+                                        children: [
+                                          const Text('I agree to the '),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.to(() => const TermsScreen());
+                                            },
+                                            child: const Text(
+                                              'Terms & Conditions',
+                                              style: TextStyle(
+                                                color: Colors.blue,
+                                                decoration: TextDecoration.underline,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
                                 Center(
                                   child: GestureDetector(
                                     onTap: controller.signUp,

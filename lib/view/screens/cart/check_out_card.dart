@@ -75,10 +75,16 @@ class CheckoutCard extends StatelessWidget {
 
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      controller.placeOrder();
-                    },
-                    child: const Text("Order Delivery"),
+                    onPressed: controller.cartList.isEmpty
+                        ? null
+                        : () {
+                            controller.placeOrder();
+                          },
+                    child: Text(
+                      controller.cartList.isEmpty
+                          ? "Add items to order"
+                          : "Order Delivery",
+                    ),
                   ),
                 ),
               ],

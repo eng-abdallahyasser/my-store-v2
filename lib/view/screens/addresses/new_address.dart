@@ -25,40 +25,44 @@ class NewAddress extends StatelessWidget {
       appBar: AppBar(
         title: const Text('New Address'),
       ),
-      body: Center(
-        child: Padding(
+      body: SafeArea(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SmallMapCard(
-                    location: LatLng(address.latitude, address.longitude)),
+                  location: LatLng(address.latitude, address.longitude),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    "latitude = ${address.latitude.toString()} & longitude = ${address.longitude.toString()}",
-                  ),
+                child: Text(
+                  "latitude = ${address.latitude.toString()} & longitude = ${address.longitude.toString()}",
                 ),
               ),
+              const SizedBox(height: 12),
               MyTextfield(
-                  hintText: "Your Address", controller: addressController),
+                hintText: "Your Address",
+                controller: addressController,
+              ),
+              const SizedBox(height: 12),
               MyTextfield(
                 hintText: "Phone Number",
                 controller: phoneController,
                 keyboardType: TextInputType.phone,
               ),
-              const Spacer(),
+              const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
                   controller.onSaveNewAddressClicked(address);
                 },
                 child: const MyButton(text: "Save Address"),
               ),
-              const SizedBox(height: 20,)
+              const SizedBox(height: 24),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,17 +24,52 @@ class CartController extends GetxController {
     phoneNumber: "phoneNumber",
   );
 
+  StreamSubscription<QuerySnapshot>? _addressesSub;
+
   @override
   void onInit() async {
     calculateTotal();
     getAddresses();
+    _startAddressesListener();
     super.onInit();
   }
 
-  void getAddresses() async {
+  Future<void> getAddresses() async {
     addresses = await Repo.address.getAddresses(
       Repo.auth.getCurrentUser()!.uid,
     );
+    // Auto-select a default address if none selected yet
+    if (selectedAddress.latitude == 0 && addresses.isNotEmpty) {
+      selectedAddress = addresses.first;
+    }
+    update();
+  }
+
+  void _startAddressesListener() {
+    final user = Repo.auth.getCurrentUser();
+    if (user == null) return;
+    _addressesSub?.cancel();
+    _addressesSub = FirebaseFirestore.instance
+        .collection('addresses')
+        .where('userId', isEqualTo: user.uid)
+        .snapshots()
+        .listen((snapshot) {
+      addresses = snapshot.docs
+          .map((doc) => Address.fromMap(Map<String, dynamic>.from(doc.data())))
+          .toList();
+      if ((selectedAddress.latitude == 0 ||
+              !addresses.any((a) => a.addressId == selectedAddress.addressId)) &&
+          addresses.isNotEmpty) {
+        selectedAddress = addresses.first;
+      }
+      update();
+    });
+  }
+
+  @override
+  void onClose() {
+    _addressesSub?.cancel();
+    super.onClose();
   }
 
   void addToCart(CartItem cartItem) {
@@ -58,7 +94,7 @@ class CartController extends GetxController {
     } else if (cartList[index].quantity == 1) {
       Get.dialog(
         AlertDialog(
-          title: const Text("Are you sure?"),
+          title: const Text("هل أنت متأكد؟"),
           actions: [
             TextButton(
               onPressed: () {
@@ -66,13 +102,13 @@ class CartController extends GetxController {
                 Get.back();
                 calculateTotal();
               },
-              child: const Text("Yes, Remove It"),
+              child: const Text("نعم، احذفها"),
             ),
             TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No"),
+              child: const Text("لا"),
             ),
           ],
         ),
@@ -90,14 +126,28 @@ class CartController extends GetxController {
   }
 
   void saveOrder() async {
+    // Prevent saving an order if the cart is empty
+    if (cartList.isEmpty) {
+      // If any dialog is open, ensure it is closed before showing the snackbar
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      Get.snackbar(
+        "سلة التسوق فارغة",
+        "يرجى إضافة منتجات إلى سلة التسوق قبل إتمام الطلب.",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
     // add progress indcator here
     Get.defaultDialog(
-      title: "Saving Your Order",
+      title: "جاري حفظ طلبك...",
       content: const Column(
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text("Please wait..."),
+          Text("يرجى الانتظار..."),
         ],
       ),
     );
@@ -125,8 +175,8 @@ class CartController extends GetxController {
     // close it after finishing
     Get.back();
     Get.snackbar(
-      "Success",
-      "Your Order Saved successfully",
+      "نجاح",
+      "تم حفظ طلبك بنجاح",
       snackPosition: SnackPosition.TOP,
     );
   }
@@ -226,14 +276,24 @@ class CartController extends GetxController {
   }
 
   void placeOrder() async {
+    // Do not proceed if cart is empty
+    if (cartList.isEmpty) {
+      Get.snackbar(
+        "سلة التسوق فارغة",
+        "يرجى إضافة منتجات إلى سلة التسوق قبل إتمام الطلب.",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
     // add progress indcator here
     Get.defaultDialog(
-      title: "Saving Your Order",
+      title: "جاري حفظ طلبك...",
       content: const Column(
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text("Loading"),
+          Text("جاري التحميل..."),
         ],
       ),
     );
@@ -244,9 +304,9 @@ class CartController extends GetxController {
     if (addresses.isEmpty) {
       Get.back(); // close previous dialog/page if open
       Get.defaultDialog(
-        title: "Error",
-        middleText: "Please add your address first",
-        textConfirm: "OK",
+        title: "خطأ",
+        middleText: "يرجى إضافة عنوانك أولاً",
+        textConfirm: "حسناً",
         onConfirm: () {
           Get.back(); // close the dialog
           Get.to(() => AddressScreen()); // navigate after closing
@@ -255,9 +315,9 @@ class CartController extends GetxController {
     } else if (selectedAddress.latitude == 0) {
       Get.back();
       Get.defaultDialog(
-        title: "Error",
-        middleText: "Please select your address first",
-        textConfirm: "OK",
+        title: "خطأ",
+        middleText: "يرجى اختيار عنوانك أولاً",
+        textConfirm: "حسناً",
         onConfirm: () {
           Get.back(); // close the dialog only
         },
@@ -265,9 +325,9 @@ class CartController extends GetxController {
     } else if (!isRestaurantOpen(status)) {
       Get.back();
       Get.defaultDialog(
-        title: "Error",
-        middleText: status?.closedMessage ?? "Restaurant is closed",
-        textConfirm: "OK",
+        title: "خطأ",
+        middleText: status?.closedMessage ?? "المطعم مغلق",
+        textConfirm: "حسناً",
         onConfirm: () {
           Get.back(); // close the dialog
         },
@@ -275,7 +335,7 @@ class CartController extends GetxController {
     } else {
       Get.back();
       Get.defaultDialog(
-        title: "Confirm Your Address",
+        title: "تأكيد عنوانك",
         content: Column(
           children: [
             const SizedBox(height: 20),
@@ -289,7 +349,7 @@ class CartController extends GetxController {
           Get.back();
           saveOrder();
         },
-        textConfirm: "Confirm",
+        textConfirm: "تأكيد",
         onCancel: () {
           Get.back();
         },

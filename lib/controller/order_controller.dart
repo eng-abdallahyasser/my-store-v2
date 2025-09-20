@@ -57,18 +57,11 @@ class OrderController extends GetxController {
       orders.value = response;
     } catch (e) {
       log(e.toString());
-      Get.snackbar('Error', 'Failed to load orders: ${e.toString()}');
+      Get.snackbar('خطأ', 'فشل في تحميل الطلبات: ${e.toString()}');
     } finally {
       isLoading(false);
     }
   }
-
-  // @override
-  // void onReady() {
-  //   final orderId = Get.arguments as String;
-  //   loadOrderDetails(orderId);
-  //   super.onReady();
-  // }
 
   Future<MyOrder?> loadOrderDetails(String orderId) async {
     try {
@@ -78,29 +71,12 @@ class OrderController extends GetxController {
       return response;
     } catch (e) {
       log(e.toString());
-      Get.snackbar('Error', 'Failed to load order details');
+      Get.snackbar('خطأ', 'فشل في تحميل تفاصيل الطلب');
       return null;
     } finally {
       isLoading(false);
     }
   }
-
-  // Future<void> updateOrderStatus(String orderId, String newStatus) async {
-  //   try {
-  //     isLoading(true);
-  //     await _repository.updateOrderStatus(orderId, newStatus);
-  //     final index = orders.indexWhere((o) => o.id == orderId);
-  //     if (index != -1) {
-  //       orders[index] = orders[index].copyWith(status: newStatus);
-  //     }
-  //     Get.snackbar('Success', 'Order status updated');
-  //   } catch (e) {
-  //     log(e.toString());
-  //     Get.snackbar('Error', 'Failed to update status');
-  //   } finally {
-  //     isLoading(false);
-  //   }
-  // }
 
   void toggleStatusFilter(String status) {
     if (selectedStatus.contains(status)) {
@@ -115,9 +91,9 @@ class OrderController extends GetxController {
     try {
       isLoading(true);
       await _repository.sendNotification(orderId);
-      Get.snackbar('Success', 'Notification sent to customer');
+      Get.snackbar('نجاح', 'تم إرسال الإشعار إلى العميل');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send notification');
+      Get.snackbar('خطأ', 'فشل في إرسال الإشعار');
     } finally {
       isLoading(false);
     }

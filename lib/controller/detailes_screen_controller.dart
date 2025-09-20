@@ -96,8 +96,8 @@ class DetailesScreenController extends GetxController {
     }
     if (!validOptions) {
       Get.snackbar(
-        'Error',
-        'Please choose valid options',
+        'خطأ',
+        'يرجى اختيار خيارات صحيحة',
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
@@ -119,11 +119,11 @@ class DetailesScreenController extends GetxController {
     );
     Get.back();
     Get.snackbar(
-      'Success',
-      'Product added to cart',
+      'نجاح',
+      'تمت إضافة المنتج إلى السلة',
       snackPosition: SnackPosition.BOTTOM,
       mainButton: TextButton(
-        child: const Text('go to cart'),
+        child: const Text('اذهب إلى السلة'),
         onPressed: () {
           Get.closeCurrentSnackbar();
           Get.find<NavigationBarController>().setIndex(2);

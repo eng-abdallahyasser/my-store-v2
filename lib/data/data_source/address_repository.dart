@@ -5,12 +5,13 @@ import 'package:store_app_v2/data/data_source/base_repository.dart';
 import 'package:store_app_v2/data/model/address.dart';
 
 class AddressRepository extends BaseRepository {
-  Future<void> addAddress(Address address) async {
+  Future<String> addAddress(Address address) async {
     try {
       DocumentReference docRef = await firestore.collection("addresses").add(address.toMap());
       await firestore.collection("addresses").doc(docRef.id).update({
         "addressId": docRef.id,
       });
+      return docRef.id;
     } catch (e) {
       log("Error adding address: $e");
       rethrow;

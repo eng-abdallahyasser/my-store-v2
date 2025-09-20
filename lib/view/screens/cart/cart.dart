@@ -21,9 +21,8 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     log("controller.cartList.length.toString()");
     return GetBuilder<CartController>(
+      init: controller,
       builder: (controller) {
-        controller.calculateTotal();
-        controller.getAddresses();
         return Scaffold(
           appBar: AppBar(
             title: Column(

@@ -5,6 +5,8 @@ import 'package:store_app_v2/data/data_source/auth_repository.dart';
 import 'package:store_app_v2/data/data_source/favorites_repository.dart';
 import 'package:store_app_v2/data/data_source/order_repository.dart';
 import 'package:store_app_v2/data/data_source/product_repository.dart';
+import 'package:store_app_v2/data/data_source/terms_repository.dart';
+import 'package:store_app_v2/data/data_source/privacy_policy_repository.dart';
 import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/data/model/restaurant_status.dart';
 import 'package:store_app_v2/firebase/storage_services.dart';
@@ -16,6 +18,8 @@ class Repo {
   static final AuthRepository auth = AuthRepository();
   static final AddressRepository address = AddressRepository();
   static final FavoritesRepository favorites = FavoritesRepository();
+  static final TermsRepository terms = TermsRepository();
+  static final PrivacyPolicyRepository privacyPolicy = PrivacyPolicyRepository();
   static final StorageServices _storage = StorageServices();
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

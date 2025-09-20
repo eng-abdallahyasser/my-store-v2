@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/controller/profile_controller.dart';
+import 'package:store_app_v2/core/app_utils.dart';
 import 'package:store_app_v2/view/screens/addresses/address.dart';
 import 'package:store_app_v2/view/screens/orders/orders_list_screen.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_menu.dart';
 import 'package:store_app_v2/view/screens/profile/components/profile_pic.dart';
 import 'package:store_app_v2/view/screens/support/feedback_screen.dart';
+import 'package:store_app_v2/view/screens/support/terms_screen.dart';
+import 'package:store_app_v2/view/screens/support/privacy_policy_screen.dart';
+
 
 class Profile extends StatelessWidget {
   final ProfileController controller = Get.put(ProfileController());
@@ -55,6 +59,20 @@ class Profile extends StatelessWidget {
               press: () {},
             ),
             ProfileMenu(
+              text: "Terms & Conditions",
+              icon: "assets/icons/Question mark.svg",
+              press: () {
+                Get.to(() => const TermsScreen());
+              },
+            ),
+            ProfileMenu(
+              text: "Privacy Policy",
+              icon: "assets/icons/Question mark.svg",
+              press: () {
+                Get.to(() => const PrivacyPolicyScreen());
+              },
+            ),
+            ProfileMenu(
               text: "Suggestions & Complaints",
               icon: "assets/icons/Question mark.svg",
               press: () {
@@ -67,14 +85,24 @@ class Profile extends StatelessWidget {
               press: controller.logOut,
             ),
             const SizedBox(height: 20),
-            // FutureBuilder(
-            //     future: AppUtils.getAppVersion(),
-            //     builder: (context, snapshot) {
-            //       if (snapshot.hasData) {
-            //         return Text(snapshot.data);
-            //       }
-            //       return const SizedBox.shrink();
-            //     }),
+            FutureBuilder<String>(
+              future: AppUtils.getAppVersion(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                }
+                if (snapshot.hasData) {
+                  return Text(
+                    'App version: ${snapshot.data}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
             const SizedBox(height: 20),
           ],
         ),

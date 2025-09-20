@@ -108,27 +108,27 @@ class SignInScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 10),
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "I forgetten my password, ",
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Reset it.",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // const SizedBox(height: 10),
+                                // const Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     Text(
+                                //       "I forgetten my password, ",
+                                //       style: TextStyle(
+                                //         fontSize: 18.0,
+                                //         fontWeight: FontWeight.w400,
+                                //       ),
+                                //     ),
+                                //     Text(
+                                //       "Reset it.",
+                                //       style: TextStyle(
+                                //         color: Colors.blue,
+                                //         fontSize: 18.0,
+                                //         fontWeight: FontWeight.w500,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 const SizedBox(height: 40),
                                 Center(
                                   child: GestureDetector(

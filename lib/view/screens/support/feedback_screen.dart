@@ -16,7 +16,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final _messageController = TextEditingController();
   String _type = 'Suggestion';
 
-  static const String developerGithubUrl = 'https://github.com/eng-abdallahyasser';
+  static const String developerGithubUrl = 'https://www.linkedin.com/in/abdallah-yasser-30a1681a1/';
 
   @override
   void dispose() {
@@ -29,7 +29,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     final user = Repo.auth.getCurrentUser();
     if (user == null) {
-      Get.snackbar('Login required', 'Please login to send your feedback');
+      Get.snackbar('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول لإرسال ملاحظاتك');
       return;
     }
 
@@ -40,10 +40,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         message: _messageController.text.trim(),
         userId: user.uid,
       );
-      Get.snackbar('Thank you', 'Your ${_type.toLowerCase()} has been sent');
+      Get.snackbar('شكراً لك', 'تم إرسال رسالتك بنجاح');
       Navigator.of(context).pop();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send. Please try again.');
+      Get.snackbar('خطأ', 'فشل الإرسال. يرجى المحاولة مرة أخرى.');
     }
   }
 
@@ -51,7 +51,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Suggestions & Complaints'),
+        title: const Text('الاقتراحات والشكاوى'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,6 +69,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 items: const [
                   DropdownMenuItem(value: 'Suggestion', child: Text('Suggestion')),
                   DropdownMenuItem(value: 'Complaint', child: Text('Complaint')),
+                  DropdownMenuItem(value: 'Bug', child: Text('Bug')),
+                  DropdownMenuItem(value: 'Others', child: Text('Others')),
                 ],
                 onChanged: (v) => setState(() => _type = v ?? 'Suggestion'),
               ),
@@ -77,16 +79,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 controller: _messageController,
                 maxLines: 6,
                 decoration: const InputDecoration(
-                  labelText: 'Describe your suggestion or complaint',
+                  labelText: 'Describe your feedback',
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(),
                 ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) {
-                    return 'Please enter your message';
+                    return 'يرجى إدخال رسالتك';
                   }
                   if (v.trim().length < 10) {
-                    return 'Please provide more details (at least 10 characters)';
+                    return 'يرجى تقديم مزيد من التفاصيل (على الأقل 10 أحرف)';
                   }
                   return null;
                 },
