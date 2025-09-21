@@ -137,6 +137,37 @@ class SignInScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
+                                // Google Sign-In Button
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed: controller.googleSignIn,
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      side: BorderSide(color: Colors.grey.shade300),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        // You can replace the emoji with an asset icon if available
+                                        Image.asset("assets/images/google.png", width: 24, height: 24),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Continue with Google',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
                               ],
                             );
                           },

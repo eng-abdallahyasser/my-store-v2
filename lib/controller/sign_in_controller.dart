@@ -50,3 +50,29 @@ class SignInController extends GetxController {
     }
   }
 }
+
+extension GoogleSignInController on SignInController {
+  Future<void> googleSignIn() async {
+    Get.dialog(const AlertDialog(
+      title: Text('جاري تسجيل الدخول...'),
+      content: SizedBox(
+        height: 100,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+    ));
+    String message = await _auth.signInWithGoogle();
+    Get.back();
+    if (message == "Signed in") {
+      Get.offAllNamed(MyRoutes.navigationBarWraper);
+      return;
+    }
+    if (message == 'cancelled') {
+      // User cancelled the Google flow; no dialog necessary.
+      return;
+    }
+    Get.defaultDialog(
+      title: 'خطأ',
+      middleText: 'فشل تسجيل الدخول عبر Google: $message',
+    );
+  }
+}
