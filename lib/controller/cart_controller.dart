@@ -22,6 +22,12 @@ class CartController extends GetxController {
     longitude: 0,
     address: "address",
     phoneNumber: "phoneNumber",
+    area: "",
+    street: "",
+    building: "",
+    floor: "",
+    apartment: "",
+    landmark: "",
   );
 
   StreamSubscription<QuerySnapshot>? _addressesSub;

@@ -9,6 +9,12 @@ class Address {
   double longitude;
   String address;
   String phoneNumber;
+  String area; // منطقة
+  String street; // شارع
+  String building; // عمارة
+  String floor; // دور
+  String apartment; // شقة
+  String landmark; // علامة مميزة
   Address({
     required this.userId,
     required this.addressId,
@@ -17,6 +23,12 @@ class Address {
     required this.longitude,
     required this.address,
     required this.phoneNumber,
+    required this.area,
+    required this.street,
+    required this.building,
+    required this.floor,
+    required this.apartment,
+    required this.landmark,
   });
  
 
@@ -28,6 +40,12 @@ class Address {
     double? longitude,
     String? address,
     String? phoneNumber,
+    String? area,
+    String? street,
+    String? building,
+    String? floor,
+    String? apartment,
+    String? landmark,
   }) {
     return Address(
       userId: userId ?? this.userId,
@@ -37,6 +55,12 @@ class Address {
       longitude: longitude ?? this.longitude,
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      area: area ?? this.area,
+      street: street ?? this.street,
+      building: building ?? this.building,
+      floor: floor ?? this.floor,
+      apartment: apartment ?? this.apartment,
+      landmark: landmark ?? this.landmark,
     );
   }
 
@@ -49,6 +73,12 @@ class Address {
       'longitude': longitude,
       'address': address,
       'phoneNumber': phoneNumber,
+      'area': area,
+      'street': street,
+      'building': building,
+      'floor': floor,
+      'apartment': apartment,
+      'landmark': landmark,
     };
   }
 
@@ -61,6 +91,12 @@ class Address {
       longitude: map['longitude'] as double,
       address: map['address'] as String,
       phoneNumber: map['phoneNumber'] as String,
+      area: map['area'] as String? ?? '',
+      street: map['street'] as String? ?? '',
+      building: map['building'] as String? ?? '',
+      floor: map['floor'] as String? ?? '',
+      apartment: map['apartment'] as String? ?? '',
+      landmark: map['landmark'] as String? ?? '',
     );
   }
 
@@ -70,7 +106,7 @@ class Address {
 
   @override
   String toString() {
-    return 'Address(userId: $userId, addressId: $addressId, name: $name, latitude: $latitude, longitude: $longitude, address: $address, phoneNumber: $phoneNumber)';
+    return 'Address(userId: $userId, addressId: $addressId, name: $name, latitude: $latitude, longitude: $longitude, address: $address, phoneNumber: $phoneNumber, area: $area, street: $street, building: $building, floor: $floor, apartment: $apartment, landmark: $landmark)';
   }
 
   @override
@@ -84,7 +120,13 @@ class Address {
       other.latitude == latitude &&
       other.longitude == longitude &&
       other.address == address &&
-      other.phoneNumber == phoneNumber;
+      other.phoneNumber == phoneNumber &&
+      other.area == area &&
+      other.street == street &&
+      other.building == building &&
+      other.floor == floor &&
+      other.apartment == apartment &&
+      other.landmark == landmark;
   }
 
   @override
@@ -95,6 +137,12 @@ class Address {
       latitude.hashCode ^
       longitude.hashCode ^
       address.hashCode ^
-      phoneNumber.hashCode;
+      phoneNumber.hashCode ^
+      area.hashCode ^
+      street.hashCode ^
+      building.hashCode ^
+      floor.hashCode ^
+      apartment.hashCode ^
+      landmark.hashCode;
   }
 }

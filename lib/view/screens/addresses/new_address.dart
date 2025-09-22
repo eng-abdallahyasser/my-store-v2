@@ -12,12 +12,24 @@ class NewAddress extends StatelessWidget {
   final Address address;
   final TextEditingController addressController;
   final TextEditingController phoneController;
+  final TextEditingController areaController;
+  final TextEditingController streetController;
+  final TextEditingController buildingController;
+  final TextEditingController floorController;
+  final TextEditingController apartmentController;
+  final TextEditingController landmarkController;
 
   NewAddress(
       {super.key,
       required this.address,
       required this.addressController,
-      required this.phoneController});
+      required this.phoneController,
+      required this.areaController,
+      required this.streetController,
+      required this.buildingController,
+      required this.floorController,
+      required this.apartmentController,
+      required this.landmarkController});
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +56,62 @@ class NewAddress extends StatelessWidget {
                   "latitude = ${address.latitude.toString()} & longitude = ${address.longitude.toString()}",
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               MyTextfield(
                 hintText: "Your Address",
                 controller: addressController,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               MyTextfield(
                 hintText: "Phone Number",
                 controller: phoneController,
                 keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 10),
+              MyTextfield(
+                hintText: "المنطقة",
+                controller: areaController,
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: MyTextfield(
+                      hintText: "الشارع",
+                      controller: streetController,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: MyTextfield(
+                      hintText: "العمارة",
+                      controller: buildingController,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: MyTextfield(
+                      hintText: "الدور",
+                      controller: floorController,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: MyTextfield(
+                      hintText: "الشقة",
+                      controller: apartmentController,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              MyTextfield(
+                hintText: "علامة مميزة",
+                controller: landmarkController,
               ),
               const SizedBox(height: 24),
               GestureDetector(
