@@ -158,18 +158,22 @@ class CartController extends GetxController {
       ),
     );
 
+    // Get current user ID
+    final user = Repo.auth.getCurrentUser();
+    final currentUserId = user?.uid ?? "";
+    
     MyOrder order = MyOrder(
       id: "",
-      userId: "",
+      userId: currentUserId,
       customerPhone: selectedAddress.phoneNumber,
-      shippingAddress: selectedAddress.addressId,
+      shippingAddress: selectedAddress.getCompactAddress(),
       items: cartList,
       total: total,
       status: "Pending",
       createdAt: Timestamp.now(),
       paymentStatus: "unpaid",
-      customerName: "customerName",
-      customerEmail: "customerEmail",
+      customerName: user?.displayName ?? "Unknown Customer",
+      customerEmail: user?.email ?? "No Email",
     );
 
     //saving order ....

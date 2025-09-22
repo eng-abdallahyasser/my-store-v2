@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class Address {
@@ -103,6 +102,116 @@ class Address {
   String toJson() => json.encode(toMap());
 
   factory Address.fromJson(String source) => Address.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  /// Returns a formatted address string for display purposes
+  String getFormattedAddress() {
+    List<String> parts = [];
+    
+    if (name.isNotEmpty) parts.add('Name: $name');
+    if (address.isNotEmpty) parts.add('Address: $address');
+    if (latitude!=0.0) parts.add('Latitude: $latitude');
+    if (longitude!=0.0) parts.add('Longitude: $longitude');
+    if (addressId.isNotEmpty) parts.add('addressId: $addressId');
+    if (area.isNotEmpty) parts.add('Area: $area (منطقة)');
+    if (street.isNotEmpty) parts.add('Street: $street (شارع)');
+    if (building.isNotEmpty) parts.add('Building: $building (عمارة)');
+    if (floor.isNotEmpty) parts.add('Floor: $floor (دور)');
+    if (apartment.isNotEmpty) parts.add('Apartment: $apartment (شقة)');
+    if (landmark.isNotEmpty) parts.add('Landmark: $landmark (علامة مميزة)');
+    if (phoneNumber.isNotEmpty) parts.add('Phone: $phoneNumber');
+    
+    return parts.join('\n');
+  }
+
+  /// Returns a compact formatted address for copying
+  String getCompactAddress() {
+    List<String> parts = [];
+    
+    if (name.isNotEmpty) parts.add(name);
+    if (address.isNotEmpty) parts.add(address);
+    if (latitude!=0.0) parts.add('Latitude: $latitude');
+    if (longitude!=0.0) parts.add('Longitude: $longitude');
+    if (addressId.isNotEmpty) parts.add('addressId: $addressId');
+    if (area.isNotEmpty) parts.add('Area: $area');
+    if (street.isNotEmpty) parts.add('Street: $street');
+    if (building.isNotEmpty) parts.add('Building: $building');
+    if (floor.isNotEmpty) parts.add('Floor: $floor');
+    if (apartment.isNotEmpty) parts.add('Apartment: $apartment');
+    if (landmark.isNotEmpty) parts.add('Landmark: $landmark');
+    if (phoneNumber.isNotEmpty) parts.add('Phone: $phoneNumber');
+    
+    return parts.join(', ');
+  }
+
+  /// Converts a compact address string back to Address object
+  static Address fromCompactAddress(String compactAddress) {
+    // Initialize with default values
+    String name = '';
+    String address = '';
+    double latitude = 0.0;
+    double longitude = 0.0;
+    String addressId = '';
+    String area = '';
+    String street = '';
+    String building = '';
+    String floor = '';
+    String apartment = '';
+    String landmark = '';
+    String phoneNumber = '';
+    
+    // Split the compact address by comma and space
+    List<String> parts = compactAddress.split(', ');
+    
+    for (String part in parts) {
+      part = part.trim();
+      
+      if (part.startsWith('Latitude: ')) {
+        latitude = double.tryParse(part.substring(10)) ?? 0.0;
+      } else if (part.startsWith('Longitude: ')) {
+        longitude = double.tryParse(part.substring(11)) ?? 0.0;
+      } else if (part.startsWith('addressId: ')) {
+        addressId = part.substring(11);
+      } else if (part.startsWith('Area: ')) {
+        area = part.substring(6);
+      } else if (part.startsWith('Street: ')) {
+        street = part.substring(8);
+      } else if (part.startsWith('Building: ')) {
+        building = part.substring(10);
+      } else if (part.startsWith('Floor: ')) {
+        floor = part.substring(7);
+      } else if (part.startsWith('Apartment: ')) {
+        apartment = part.substring(11);
+      } else if (part.startsWith('Landmark: ')) {
+        landmark = part.substring(10);
+      } else if (part.startsWith('Phone: ')) {
+        phoneNumber = part.substring(7);
+      } else {
+        // If no prefix, it's either name or address
+        // First non-prefixed part is name, second is address
+        if (name.isEmpty) {
+          name = part;
+        } else if (address.isEmpty) {
+          address = part;
+        }
+      }
+    }
+    
+    return Address(
+      userId: '', // Will need to be set separately
+      addressId: addressId,
+      name: name,
+      latitude: latitude,
+      longitude: longitude,
+      address: address,
+      phoneNumber: phoneNumber,
+      area: area,
+      street: street,
+      building: building,
+      floor: floor,
+      apartment: apartment,
+      landmark: landmark,
+    );
+  }
 
   @override
   String toString() {
