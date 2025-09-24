@@ -1,6 +1,8 @@
 // order_card.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:store_app_v2/data/model/my_order.dart';
+import 'package:store_app_v2/view/screens/orders/order_details_screen.dart';
 
 class OrderCard extends StatelessWidget {
   final MyOrder order;
@@ -29,8 +31,8 @@ class OrderCard extends StatelessWidget {
                 Chip(
                   backgroundColor: _getStatusColor(),
                   label: Text(
-                    order.status,
-                    style: const TextStyle(color: Colors.white),
+                    order.status.toLowerCase() == 'pending' ? 'Pending' : 'Confirmed',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -44,27 +46,17 @@ class OrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text('Customer ID: ${order.customerEmail.substring(0, 8)}...'),
+            Text('Order #${order.orderNumber}'),
+            Text('Date: ${_formatDate(order.createdAt.toDate())}'),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  child: const Text('VIEW DETAILS'),
-                  onPressed: () {
-                    // Get.toNamed(Routes.orderDetails, arguments: order.id);
-                  },
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('MARK COMPLETED'),
-                ),
-              ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                child: const Text('VIEW DETAILS'),
+                onPressed: () {
+                  Get.to(() => OrderDetailsScreen(order: order));
+                },
+              ),
             ),
           ],
         ),
@@ -73,11 +65,14 @@ class OrderCard extends StatelessWidget {
   }
 
   Color _getStatusColor() {
-    // Implement status color logic
-    return Colors.blue;
+    return order.status.toLowerCase() == 'pending' ? Colors.blue : Colors.green;
   }
 
-  double _calculateTotal() {
-    return order.items.fold(0, (sum, item) => sum + item.totalPrice);
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _calculateTotal() {
+    return order.total.toStringAsFixed(2);
   }
 }

@@ -10,48 +10,23 @@ import 'package:store_app_v2/view/screens/navigation%20wraper/my_navigation_bar.
 import 'package:store_app_v2/view/screens/onboarding.dart';
 import 'package:store_app_v2/view/screens/profile/profile.dart';
 import 'package:store_app_v2/view/screens/splash_screen/splash_screen.dart';
+import 'package:store_app_v2/view/screens/notifications/notifications.dart';
 
 class AppPages {
   static final routes = [
-    GetPage(
-      name: MyRoutes.onboarding,
-      page: () => Onboarding(),
-    ),
-    GetPage(
-      name: MyRoutes.splashScreen,
-      page: () => const SplashScreen(),
-    ),
-    GetPage(
-      name: MyRoutes.signInScreen,
-      page: () => SignInScreen(),
-    ),
-    GetPage(
-      name: MyRoutes.signUpScreen,
-      page: () => SignUpScreen(),
-    ),
-    GetPage(
-      name: MyRoutes.home,
-      page: () => const Home(),
-    ),
-    GetPage(
-      name: MyRoutes.cart,
-      page: () => CartScreen(),
-    ),
-    GetPage(
-      name: MyRoutes.profile,
-      page: () => Profile(),
-    ),
-    GetPage(
-      name: MyRoutes.search,
-      page: () => const Search(),
-    ),
+    GetPage(name: MyRoutes.onboarding, page: () => Onboarding()),
+    GetPage(name: MyRoutes.splashScreen, page: () => const SplashScreen()),
+    GetPage(name: MyRoutes.signInScreen, page: () => SignInScreen()),
+    GetPage(name: MyRoutes.signUpScreen, page: () => SignUpScreen()),
+    GetPage(name: MyRoutes.home, page: () => const Home()),
+    GetPage(name: MyRoutes.cart, page: () => CartScreen()),
+    GetPage(name: MyRoutes.profile, page: () => Profile()),
+    GetPage(name: MyRoutes.search, page: () => const Search()),
     GetPage(
       name: MyRoutes.navigationBarWraper,
       page: () => MyNavigationBarWraper(),
     ),
-    GetPage(
-      name: MyRoutes.addressScreen,
-      page: () => AddressScreen(),
-    ),
+    GetPage(name: MyRoutes.addressScreen, page: () => AddressScreen()),
+    GetPage(name: MyRoutes.notifications, page: () => NotificationsScreen()),
   ];
 }

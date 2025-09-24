@@ -107,11 +107,7 @@ class Address {
   String getFormattedAddress() {
     List<String> parts = [];
     
-    if (name.isNotEmpty) parts.add('Name: $name');
     if (address.isNotEmpty) parts.add('Address: $address');
-    if (latitude!=0.0) parts.add('Latitude: $latitude');
-    if (longitude!=0.0) parts.add('Longitude: $longitude');
-    if (addressId.isNotEmpty) parts.add('addressId: $addressId');
     if (area.isNotEmpty) parts.add('Area: $area (منطقة)');
     if (street.isNotEmpty) parts.add('Street: $street (شارع)');
     if (building.isNotEmpty) parts.add('Building: $building (عمارة)');
@@ -143,7 +139,6 @@ class Address {
     return parts.join(', ');
   }
 
-  /// Converts a compact address string back to Address object
   static Address fromCompactAddress(String compactAddress) {
     // Initialize with default values
     String name = '';

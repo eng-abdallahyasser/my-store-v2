@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/controller/order_controller.dart';
+import 'package:store_app_v2/controller/auth_controller.dart';
 import 'package:store_app_v2/view/screens/orders/order_card.dart';
+import 'package:store_app_v2/view/screens/orders/order_details_screen.dart';
 
 class OrdersListScreen extends StatelessWidget {
-  final OrderController _controller = Get.put(OrderController());
-  OrdersListScreen({super.key});
+  final OrderController _orderController = Get.put(OrderController());
+  final AuthController _authController = Get.put(AuthController());
 
-  @override
+  OrdersListScreen({super.key});
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -15,25 +17,60 @@ class OrdersListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: (){
+            onPressed: () {
               // _showFilterDialog();
             },
           ),
         ],
       ),
       body: Obx(() {
-        if (_controller.isLoading.value) {
+        if (_orderController.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
+
+        // Get current user ID
+        final currentUserId = _authController.user?.uid ?? '';
+
+        // Filter orders by current user and status
+        final userOrders =
+            _orderController.orders.where((order) {
+              return order.userId == currentUserId;
+            }).toList();
+
+        if (userOrders.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.shopping_bag_outlined,
+                  size: 64,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No orders found',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                const Text('Your orders will appear here'),
+              ],
+            ),
+          );
+        }
+
         return RefreshIndicator(
-          onRefresh: _controller.loadOrders,
+          onRefresh: _orderController.loadOrders,
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: _controller.orders.length,
+            itemCount: userOrders.length,
             itemBuilder: (context, index) {
-              final order = _controller.orders[index];
-              return OrderCard(
-                order: order,
+              final order = userOrders[index];
+              return GestureDetector(
+                onTap: () {
+                  Get.to(() => OrderDetailsScreen(order: order));
+                },
+                child: OrderCard(order: order),
               );
             },
           ),
@@ -41,6 +78,7 @@ class OrdersListScreen extends StatelessWidget {
       }),
     );
   }
+
   // void _showFilterDialog() {
   //   Get.dialog(
   //     AlertDialog(

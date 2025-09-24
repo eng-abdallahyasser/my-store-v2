@@ -10,6 +10,7 @@ import 'package:store_app_v2/view/screens/onboarding.dart';
 import 'package:store_app_v2/view/screens/profile/profile.dart';
 import 'package:store_app_v2/view/global%20widget/search.dart';
 import 'package:store_app_v2/view/screens/splash_screen/splash_screen.dart';
+import 'package:store_app_v2/view/screens/notifications/notifications.dart';
 
 Map<String, Widget Function(BuildContext)> routes = {
   MyRoutes.onboarding: (_) => Onboarding(),
@@ -22,4 +23,5 @@ Map<String, Widget Function(BuildContext)> routes = {
   MyRoutes.search: (_) => const Search(),
   MyRoutes.navigationBarWraper: (_) => MyNavigationBarWraper(),
   MyRoutes.addressScreen: (_)=> AddressScreen(),
+  MyRoutes.notifications: (_)=> NotificationsScreen(),
 };

@@ -9,6 +9,7 @@ import 'package:store_app_v2/view/screens/profile/components/profile_pic.dart';
 import 'package:store_app_v2/view/screens/support/feedback_screen.dart';
 import 'package:store_app_v2/view/screens/support/terms_screen.dart';
 import 'package:store_app_v2/view/screens/support/privacy_policy_screen.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 
 
 class Profile extends StatelessWidget {
@@ -51,7 +52,9 @@ class Profile extends StatelessWidget {
             ProfileMenu(
               text: "Notifications",
               icon: "assets/icons/Bell.svg",
-              press: () {},
+              press: () {
+                Get.toNamed(MyRoutes.notifications);
+              },
             ),
             ProfileMenu(
               text: "Settings",

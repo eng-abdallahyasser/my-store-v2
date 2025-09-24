@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:store_app_v2/view/global%20widget/icon_btn_header.dart';
 import 'package:store_app_v2/view/screens/home/search_feild.dart';
+import 'package:get/get.dart';
+import 'package:store_app_v2/routes/my_routes.dart';
 
 
 class HomeHeader extends StatelessWidget {
@@ -21,7 +23,9 @@ class HomeHeader extends StatelessWidget {
           IconBtnWithCounter(
             svgSrc: "assets/icons/Bell.svg",
             numOfitem: 3,
-            press: () {},
+            press: () {
+              Get.toNamed(MyRoutes.notifications);
+            },
           ),
         ],
       ),

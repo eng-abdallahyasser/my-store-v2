@@ -11,6 +11,8 @@ import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:store_app_v2/services/notification_service.dart';
+import 'package:get/get.dart';
 
 Future<bool> _isOutdated() async {
   final doc = await FirebaseFirestore.instance
@@ -42,6 +44,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Repo.init();
+
+  // Initialize notifications (FCM + Local Notifications)
+  // Ensure the NotificationController is available globally
+  if (!Get.isRegistered<NotificationController>()) {
+    Get.put(NotificationController(), permanent: true);
+  }
+  await NotificationService.instance.init();
 
   final outdated = await _isOutdated();
   if (outdated) {
