@@ -4,15 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:store_app_v2/routes/app_pages.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:store_app_v2/services/notification_service.dart';
-import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 
 Future<bool> _isOutdated() async {
   final doc = await FirebaseFirestore.instance
@@ -40,23 +41,28 @@ Future<bool> _isOutdated() async {
 }
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Repo.init();
 
-  // Initialize notifications (FCM + Local Notifications)
   // Ensure the NotificationController is available globally
   if (!Get.isRegistered<NotificationController>()) {
     Get.put(NotificationController(), permanent: true);
   }
-  await NotificationService.instance.init();
+  // Ensure the FavoritesController is available globally
+  if (!Get.isRegistered<FavoritesController>()) {
+    Get.put(FavoritesController(), permanent: true);
+  }
 
+  // Check for app updates
   final outdated = await _isOutdated();
   if (outdated) {
     runApp(const UpdateRequiredApp());
     return;
   }
+
+  // Initialize notifications (FCM + Local Notifications)
+  await NotificationService.instance.init();
 
   runApp(const MyApp());
 }

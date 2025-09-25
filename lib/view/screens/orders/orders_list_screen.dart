@@ -68,7 +68,7 @@ class OrdersListScreen extends StatelessWidget {
               final order = userOrders[index];
               return GestureDetector(
                 onTap: () {
-                  Get.to(() => OrderDetailsScreen(order: order));
+                  Get.to(() => OrderDetailsScreen(orderId: order.id));
                 },
                 child: OrderCard(order: order),
               );

@@ -23,7 +23,6 @@ class Repo {
   static final StorageServices _storage = StorageServices();
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   static var prefs;
   static bool onboardingShown = false;
   static List<String> favouriteProducts = [];
@@ -31,7 +30,7 @@ class Repo {
   Map<String, dynamic>? delivaryData = {};
   static List<Product> fetchedProducts = [];
   static bool isProductsFetched = false;
-  
+
   static List<Map<String, dynamic>> testProducts = [];
 
   static Future<void> init() async {
@@ -45,7 +44,7 @@ class Repo {
     }
     await product.fetchAllProducts();
   }
- 
+
   static Future<Uint8List?> getProductImageUrl(String url) async {
     return await _storage.getProductImageUrl(url);
   }
@@ -64,14 +63,14 @@ class Repo {
           .collection('status')
           .doc('main_restaurant') // Replace with your restaurant ID
           .get();
-      
+
       if (doc.exists) {
         return RestaurantStatus.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-      } 
+      }
     } catch (e) {
       return RestaurantStatus(autoMode: false, id: '', name: '', isOpen: false, closedMessage: 'Error fetching data', openingHours: {});
     }
-    return null; 
+    return null;
   }
 
   // Submit suggestion or complaint to Firestore

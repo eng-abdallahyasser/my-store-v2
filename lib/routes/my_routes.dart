@@ -14,4 +14,5 @@ class MyRoutes {
   static const splashScreen="/splash";
   static const addressScreen="/addresses";
   static const notifications = "/notifications";
+  static const orderDetails = "/order-details";
 }

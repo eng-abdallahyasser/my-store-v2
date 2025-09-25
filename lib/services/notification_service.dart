@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
@@ -20,8 +21,49 @@ class NotificationService {
 
   bool _initialized = false;
 
+  /// Subscribe to the "all-users" topic
+  Future<void> subscribeToAllUsersTopic() async {
+    try {
+      await _messaging.subscribeToTopic('all-users');
+      print('Subscribed to all-users topic');
+    } catch (e) {
+      print('Error subscribing to all-users topic: $e');
+    }
+  }
+
+  /// Unsubscribe from the "all-users" topic
+  Future<void> unsubscribeFromAllUsersTopic() async {
+    try {
+      await _messaging.unsubscribeFromTopic('all-users');
+      print('Unsubscribed from all-users topic');
+    } catch (e) {
+      print('Error unsubscribing from all-users topic: $e');
+    }
+  }
+
   Future<void> init() async {
     if (_initialized) return;
+    
+    // Initialize local notifications first
+    const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
+    const InitializationSettings initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
+
+    await _local.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          try {
+            final data = json.decode(response.payload!) as Map<String, dynamic>;
+            _handleNavigationFromData(data);
+          } catch (e) {
+            if (kDebugMode) {
+              print('Error handling notification tap: $e');
+            }
+          }
+        }
+      },
+    );
 
     // iOS/macOS permissions
     await _messaging.requestPermission(
@@ -31,30 +73,21 @@ class NotificationService {
       provisional: false,
     );
 
-    // Create Android notification channel
+    // Subscribe to all-users topic
+    await subscribeToAllUsersTopic();
+
+    // Create Android notification channel with heads-up notification support
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'high_importance_channel',
       'High Importance Notifications',
       description: 'This channel is used for important notifications.',
-      importance: Importance.high,
+      importance: Importance.max,  // Changed from high to max for heads-up
       playSound: true,
+      enableVibration: true,
+      showBadge: true,
+      enableLights: true,
     );
 
-    // Initialize local notifications
-    const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
-    const InitializationSettings initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
-
-    await _local.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        final payload = response.payload;
-        if (payload != null) {
-          final map = jsonDecode(payload) as Map<String, dynamic>;
-          _handleNavigationFromData(map);
-        }
-      },
-    );
 
     // Android: register channel
     await _local.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
@@ -85,15 +118,27 @@ class NotificationService {
       final String title = notification?.title ?? data['title']?.toString() ?? 'إشعار جديد';
       final String body = notification?.body ?? data['body']?.toString() ?? '';
 
+      // Create notification details with heads-up notification configuration
+      final androidDetails = AndroidNotificationDetails(
+        channel.id,
+        channel.name,
+        channelDescription: channel.description,
+        importance: Importance.max,  // Max importance for heads-up
+        priority: Priority.high,
+        icon: android?.smallIcon,
+        enableVibration: true,
+        styleInformation: BigTextStyleInformation(body),
+        visibility: NotificationVisibility.public,
+        // Set to alert once to show heads-up
+        playSound: true,
+        // Set category to message for better handling
+        category: AndroidNotificationCategory.message,
+        // Set ticker for accessibility
+        ticker: title,
+      );
+
       final details = NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channelDescription: channel.description,
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: android?.smallIcon,
-        ),
+        android: androidDetails,
         iOS: const DarwinNotificationDetails(),
       );
 

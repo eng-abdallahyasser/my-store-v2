@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/data_source/product_repository.dart';
 import 'package:store_app_v2/data/model/product.dart';
-import 'package:store_app_v2/view/global%20widget/product_card.dart';
+import 'package:store_app_v2/view/global widget/product_card.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String initialQuery;

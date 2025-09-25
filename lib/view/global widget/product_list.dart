@@ -8,32 +8,29 @@ import 'package:store_app_v2/view/screens/products/category_products_screen.dart
 
 class ProductList extends StatelessWidget {
   final String title;
-  const ProductList({
-    super.key,
-    this.title = "not titled",
-  });
+  const ProductList({super.key, this.title = "not titled"});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: title == "Popular Products"
-            ? Repo.product.getPopularProducts()
-            : Repo.product.getProductsByCategory(title),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text("Error..."),
-            );
+      future:
+          title == "Popular Products"
+              ? Repo.product.getPopularProducts()
+              : Repo.product.getProductsByCategory(title),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error..."));
+        }
+        if (snapshot.hasData) {
+          var products = snapshot.data as List<Product>;
+          if (products.isEmpty) {
+            return const SizedBox.shrink();
           }
-          if (snapshot.hasData) {
-            var products = snapshot.data as List<Product>;
-            if (products.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return ProductListWidget(title: title, products: products);
-          }
-          return const SizedBox.shrink();
-        });
+          return ProductListWidget(title: title, products: products);
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 }
 
@@ -61,21 +58,17 @@ class ProductListWidget extends StatelessWidget {
           ),
         ),
         SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(
-                products.length,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 12, right: 12),
-                    child: ProductCard(
-                      product: products[index],
-                    ),
-                  );
-                },
-              ),
-            )),
-        const Divider()
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(products.length, (index) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12),
+                child: ProductCard(product: products[index]),
+              );
+            }),
+          ),
+        ),
+        const Divider(),
       ],
     );
   }

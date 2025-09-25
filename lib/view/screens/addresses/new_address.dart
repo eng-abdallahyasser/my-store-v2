@@ -19,24 +19,23 @@ class NewAddress extends StatelessWidget {
   final TextEditingController apartmentController;
   final TextEditingController landmarkController;
 
-  NewAddress(
-      {super.key,
-      required this.address,
-      required this.addressController,
-      required this.phoneController,
-      required this.areaController,
-      required this.streetController,
-      required this.buildingController,
-      required this.floorController,
-      required this.apartmentController,
-      required this.landmarkController});
+  NewAddress({
+    super.key,
+    required this.address,
+    required this.addressController,
+    required this.phoneController,
+    required this.areaController,
+    required this.streetController,
+    required this.buildingController,
+    required this.floorController,
+    required this.apartmentController,
+    required this.landmarkController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Address'),
-      ),
+      appBar: AppBar(title: const Text('New Address')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -68,10 +67,7 @@ class NewAddress extends StatelessWidget {
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 10),
-              MyTextfield(
-                hintText: "المنطقة",
-                controller: areaController,
-              ),
+              MyTextfield(hintText: "المنطقة", controller: areaController),
               const SizedBox(height: 10),
               Row(
                 children: [

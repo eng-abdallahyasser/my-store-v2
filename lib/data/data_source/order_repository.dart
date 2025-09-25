@@ -1,12 +1,13 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:store_app_v2/data/data_source/base_repository.dart';
 import 'package:store_app_v2/data/model/my_order.dart';
 import 'package:store_app_v2/data/model/order.dart';
 
 class OrderRepository extends BaseRepository {
-
   Future<List<MyOrder>> getOrders({List<String>? statusFilters}) async {
     Query query = firestore.collection('orders').orderBy('createdAt', descending: true);
     
@@ -44,9 +45,21 @@ class OrderRepository extends BaseRepository {
 
   Future<void> addOrder(MyOrder order) async {
     try {
+      // Get current user ID and FCM token
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      String? fcmToken;
+      
+      // Get FCM token if available
+      try {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      } catch (e) {
+        log('Failed to get FCM token: $e');
+      }
+
       DocumentReference counterRef = firestore.collection("counters").doc("orderCounter");
 
       await firestore.runTransaction((transaction) async {
+        // Get counter for order number
         DocumentSnapshot counterSnapshot = await transaction.get(counterRef);
 
         int currentNumber = 0;
@@ -59,11 +72,21 @@ class OrderRepository extends BaseRepository {
         int newNumber = currentNumber + 1;
         order.orderNumber = newNumber;
 
+        // Create the order
         DocumentReference docRef = firestore.collection("orders").doc();
         transaction.set(docRef, order.toMap());
         transaction.update(docRef, {"orderID": docRef.id});
         transaction.update(counterRef, {'currentNumber': newNumber});
-      });
+
+        // Update user's document with FCM token if user is logged in and token exists
+        if (userId != null && fcmToken != null) {
+          final userRef = firestore.collection('users').doc(userId);
+          transaction.update(userRef, {
+            'fcmToken': fcmToken,
+            'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
+          });
+        }
+      }); // Close the runTransaction
     } catch (error) {
       log("Failed to add order: $error");
       rethrow;

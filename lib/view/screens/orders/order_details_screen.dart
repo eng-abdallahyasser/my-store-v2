@@ -1,31 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:store_app_v2/controller/order_controller.dart';
 import 'package:store_app_v2/data/model/address.dart';
 import 'package:store_app_v2/data/model/my_order.dart';
 import 'package:store_app_v2/data/model/product.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  final MyOrder order;
+  final String orderId;
+  
 
-  const OrderDetailsScreen({Key? key, required this.order}) : super(key: key);
+  const OrderDetailsScreen({super.key, required this.orderId});
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final OrderController _orderController = Get.find<OrderController>();
   final Map<String, Product> _products = {};
   bool _isLoading = true;
+  MyOrder? _order;
 
   @override
   void initState() {
     super.initState();
-    _loadProducts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOrder();
+    });
+  }
+
+  Future<void> _loadOrder() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    try {
+      final order = await _orderController.loadOrderDetails(widget.orderId);
+      if (mounted) {
+        if (order != null) {
+          setState(() {
+            _order = order;
+          });
+          // Load products after order is set
+          _loadProducts();
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+          // Show error message if order not found
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Order not found')),
+            );
+            Navigator.of(context).pop();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading order: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading order: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _loadProducts() async {
+    if (_order == null) return;
+    
     try {
-      for (var item in widget.order.items) {
+      if (!mounted) return;
+      for (var item in _order!.items) {
         if (_products.containsKey(item.productId)) continue;
         
         final doc = await FirebaseFirestore.instance
@@ -81,13 +133,23 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_order == null) {
+      return const Scaffold(
+        body: Center(child: Text('Unable to load order details')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order #${widget.order.orderNumber}'),
+        title: Text('Order #${_order!.orderNumber}'),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,13 +177,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: widget.order.status.toLowerCase() == 'pending'
+                                  color: _order?.status.toLowerCase() == 'pending'
                                       ? Colors.blue
                                       : Colors.green,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  widget.order.status.toLowerCase() == 'pending' ? 'Pending' : 'Confirmed',
+                                  _order?.status.toLowerCase() == 'pending' ? 'Pending' : 'Confirmed',
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -136,7 +198,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ),
                           ),
                           Text(
-                            '${widget.order.createdAt.toDate().day}/${widget.order.createdAt.toDate().month}/${widget.order.createdAt.toDate().year}',
+                            _order?.createdAt != null ? '${_order!.createdAt.toDate().day}/${_order!.createdAt.toDate().month}/${_order!.createdAt.toDate().year}' : '--/--/----',
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -147,7 +209,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                   // Shipping Information
 
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: Card(
                       
@@ -165,15 +227,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '${widget.order.customerName}',
+                              _order?.customerName ?? 'N/A',
                               style: const TextStyle(fontSize: 16),
                             ),
                             Text(
-                              '${widget.order.customerEmail}',
+                              _order?.customerEmail ?? 'N/A',
                               style: const TextStyle(fontSize: 16),
                             ),
                             Text(
-                              '${ widget.order.customerPhone}',
+                              _order?.customerPhone ?? 'N/A',
                               style: const TextStyle(fontSize: 16),
                             ),
                             const SizedBox(height: 8),
@@ -184,7 +246,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            Text('${Address.fromCompactAddress(widget.order.shippingAddress).getFormattedAddress()}'),
+                            Text(_order?.shippingAddress != null 
+                                ? Address.fromCompactAddress(_order!.shippingAddress).getFormattedAddress() 
+                                : 'No shipping address provided'),
                           ],
                         ),
                       ),
@@ -207,7 +271,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...widget.order.items.map((item) {
+                          ..._order!.items.map((item) {
                             final product = _products[item.productId];
                             return ListTile(
                               leading: product?.imagesUrl.isNotEmpty == true
@@ -235,7 +299,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ),
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
@@ -260,7 +324,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Subtotal'),
-                              Text('\$${widget.order.total.toStringAsFixed(2)}'),
+                              Text('\$${_order!.total.toStringAsFixed(2)}'),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -283,7 +347,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ),
                               ),
                               Text(
-                                '\$${widget.order.total.toStringAsFixed(2)}',
+                                '\$${_order!.total.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

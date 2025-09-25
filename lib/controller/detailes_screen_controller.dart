@@ -1,13 +1,17 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:store_app_v2/controller/cart_controller.dart';
 import 'package:store_app_v2/controller/navigation_bar_controller.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
+import 'package:store_app_v2/data/model/cart_item.dart';
 import 'package:store_app_v2/data/model/option.dart';
 import 'package:store_app_v2/data/model/product.dart';
-import 'package:store_app_v2/data/model/cart_item.dart';
 import 'package:store_app_v2/data/model/variant.dart';
+import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 
 class DetailesScreenController extends GetxController {
   int selectedColor = 0;
@@ -52,15 +56,24 @@ class DetailesScreenController extends GetxController {
 
   void onAddToFavouritesTap() {
     if (!Repo.favouriteProducts.contains(product.id)) {
+      // Adding to favorites
       Repo.favouriteProducts.add(product.id);
       favouriteCount++;
       Repo.favorites.addToFavorites(product.id, Repo.auth.getCurrentUser()!.uid);
     } else {
-      favouriteCount--;
+      // Removing from favorites
       Repo.favouriteProducts.remove(product.id);
+      favouriteCount--;
       Repo.favorites.removeFromFavorites(product.id, Repo.auth.getCurrentUser()!.uid);
     }
     update();
+
+    // Update any existing FavoritesController
+    try {
+      Get.find<FavoritesController>().refreshFavorites();
+    } catch (e) {
+      // FavoritesController not found, ignore
+    }
   }
 
   Future<void> fetchImages() async {

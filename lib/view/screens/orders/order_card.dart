@@ -54,7 +54,7 @@ class OrderCard extends StatelessWidget {
               child: TextButton(
                 child: const Text('VIEW DETAILS'),
                 onPressed: () {
-                  Get.to(() => OrderDetailsScreen(order: order));
+                  Get.to(() => OrderDetailsScreen(orderId: order.id));
                 },
               ),
             ),

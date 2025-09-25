@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/product.dart';
 import 'package:store_app_v2/view/screens/details/details_screen.dart';
-
+import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 class ProductCard extends StatelessWidget {
   const ProductCard({
-    super.key,
+    Key? key,
     this.width = 140,
     this.aspectRetio = 1.02,
     required this.product,
-  });
+  }) : super(key: key);
 
   final double width, aspectRetio;
   final Product product;
@@ -112,7 +114,7 @@ class ProductCard extends StatelessWidget {
 class LoveCountBtn extends StatefulWidget {
   final Product product;
 
-  const LoveCountBtn({super.key, required this.product});
+  const LoveCountBtn({Key? key, required this.product}) : super(key: key);
 
   @override
   State<LoveCountBtn> createState() => _LoveCountBtnState();
@@ -127,9 +129,6 @@ class _LoveCountBtnState extends State<LoveCountBtn> {
     super.initState();
     count = widget.product.favouritecount;
     isFavourite = Repo.favouriteProducts.contains(widget.product.id);
-    if (isFavourite) {
-      count += 1;
-    }
   }
 
   Future<void> _onTab() async {
@@ -144,16 +143,18 @@ class _LoveCountBtnState extends State<LoveCountBtn> {
 
     if (isFavourite) {
       Repo.favouriteProducts.add(widget.product.id);
-      widget.product.favouritecount;
       await Repo.favorites.addToFavorites(widget.product.id, Repo.auth.getCurrentUser()!.uid);
     } else {
       Repo.favouriteProducts.remove(widget.product.id);
       await Repo.favorites.removeFromFavorites(widget.product.id, Repo.auth.getCurrentUser()!.uid);
     }
 
-    setState(() {
-      count = widget.product.favouritecount;
-    });
+    // Update any existing FavoritesController
+    try {
+      Get.find<FavoritesController>().refreshFavorites();
+    } catch (e) {
+      // FavoritesController not found, ignore
+    }
   }
 
   @override
