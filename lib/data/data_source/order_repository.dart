@@ -51,10 +51,12 @@ class OrderRepository extends BaseRepository {
       
       // Get FCM token if available
       try {
+        log('Getting FCM token...');
         fcmToken = await FirebaseMessaging.instance.getToken();
       } catch (e) {
         log('Failed to get FCM token: $e');
       }
+      log('FCM token: $fcmToken');
 
       DocumentReference counterRef = firestore.collection("counters").doc("orderCounter");
 
@@ -81,10 +83,10 @@ class OrderRepository extends BaseRepository {
         // Update user's document with FCM token if user is logged in and token exists
         if (userId != null && fcmToken != null) {
           final userRef = firestore.collection('users').doc(userId);
-          transaction.update(userRef, {
+          transaction.set(userRef, {
             'fcmToken': fcmToken,
             'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
-          });
+          }, SetOptions(merge: true));
         }
       }); // Close the runTransaction
     } catch (error) {

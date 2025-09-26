@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:store_app_v2/core/constants.dart';
+import 'package:store_app_v2/features/banner/domain/models/banner_model.dart' as banner_model;
+import 'package:store_app_v2/view/screens/details/details_screen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:store_app_v2/features/banner/controllers/banner_controller.dart';
+import 'package:store_app_v2/data/data_source/repo.dart';
 
 class BannerView extends StatelessWidget {
   final bool isFeatured;
@@ -55,7 +58,27 @@ class BannerView extends StatelessWidget {
                 itemBuilder: (context, index, _) {
                   return InkWell(
                     onTap: () async {
-                      if (bannerDataList != null && bannerDataList[index] is String) {
+                      final bannerData = bannerDataList != null && bannerDataList.length > index
+                          ? bannerDataList[index]
+                          : null;
+
+                      // Check if this is a product-linked banner
+                      if (bannerData is banner_model.Banner &&
+                          bannerData.type == banner_model.BannerTypeConstants.productLinkedBanner &&
+                          bannerData.productId != null) {
+                        // Navigate to product details screen
+                        try {
+                          final product = await Repo.product.getProductById(bannerData.productId!);
+                          Get.to(() => DetailsScreen(product: product));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Product not found: ${bannerData.productId}'),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      } else if (bannerDataList != null && bannerDataList[index] is String) {
                         final String url = bannerDataList[index] as String;
                         if (await canLaunchUrlString(url)) {
                           await launchUrlString(url, mode: LaunchMode.externalApplication);

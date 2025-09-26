@@ -68,10 +68,9 @@ class BannerController extends GetxController implements GetxService {
       } else if (banner.store != null &&
           moduleIdList.contains(banner.store!.moduleId)) {
         _featuredBannerDataList!.add(banner.store);
-      } else if (banner.type == 'default') {
-        _featuredBannerDataList!.add(banner.link);
       } else {
-        _featuredBannerDataList!.add(null);
+        // New banner format - store the banner object
+        _featuredBannerDataList!.add(banner);
       }
     }
 
@@ -106,14 +105,15 @@ class BannerController extends GetxController implements GetxService {
       final banners = bannerModel?.banners ?? const [];
       for (final banner in banners) {
         _bannerImageList!.add(banner.image);
+        // For new banner types, store the banner object itself
+        // For backward compatibility, check if it's an old format with item/store
         if (banner.item != null) {
           _bannerDataList!.add(banner.item);
         } else if (banner.store != null) {
           _bannerDataList!.add(banner.store);
-        } else if (banner.type == 'default') {
-          _bannerDataList!.add(banner.link);
         } else {
-          _bannerDataList!.add(null);
+          // New banner format - store the banner object
+          _bannerDataList!.add(banner);
         }
       }
 
@@ -148,14 +148,15 @@ class BannerController extends GetxController implements GetxService {
       final banners = bannerModel?.banners ?? const [];
       for (final banner in banners) {
         _taxiBannerImageList!.add(banner.image);
+        // For new banner types, store the banner object itself
+        // For backward compatibility, check if it's an old format with item/store
         if (banner.item != null) {
           _taxiBannerDataList!.add(banner.item);
         } else if (banner.store != null) {
           _taxiBannerDataList!.add(banner.store);
-        } else if (banner.type == 'default') {
-          _taxiBannerDataList!.add(banner.link);
         } else {
-          _taxiBannerDataList!.add(null);
+          // New banner format - store the banner object
+          _taxiBannerDataList!.add(banner);
         }
       }
 
