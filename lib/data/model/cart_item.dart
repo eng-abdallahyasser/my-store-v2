@@ -1,4 +1,5 @@
 import 'package:store_app_v2/data/model/variant.dart';
+import 'dart:developer';
 
 class CartItem {
   final String productId;
@@ -64,7 +65,7 @@ class CartItem {
       }
       return [];
     } catch (e) {
-      print('Error parsing variants: $e');
+      log('Error parsing variants: $e', name: 'CartItem');
       return [];
     }
   }

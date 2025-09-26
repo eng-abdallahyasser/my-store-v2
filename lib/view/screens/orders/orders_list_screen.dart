@@ -10,6 +10,7 @@ class OrdersListScreen extends StatelessWidget {
   final AuthController _authController = Get.put(AuthController());
 
   OrdersListScreen({super.key});
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

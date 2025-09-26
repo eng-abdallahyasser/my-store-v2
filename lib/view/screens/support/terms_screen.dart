@@ -8,7 +8,7 @@ class TermsScreen extends StatelessWidget {
   String _formatTimestamp(Terms terms) {
     if (terms.updatedAt == null) return '';
     final dt = terms.updatedAt!.toDate();
-    final two = (int n) => n.toString().padLeft(2, '0');
+    String two(int n) => n.toString().padLeft(2, '0');
     return '${dt.year}-${two(dt.month)}-${two(dt.day)} ${two(dt.hour)}:${two(dt.minute)}';
   }
 

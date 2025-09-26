@@ -1,33 +1,93 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:store_app_v2/controller/notification_controller.dart';
 import 'package:store_app_v2/data/model/app_notification.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
+import 'package:store_app_v2/data/data_source/repo.dart';
+import 'dart:developer';
 
 // Top-level background handler must be a static/global function
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // No UI work here; Android will display if provided
+  // Ensure Flutter bindings are initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize local notifications
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  
+  // Initialize the local notifications plugin
+  await flutterLocalNotificationsPlugin.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(),
+    ),
+  );
+  
+  // Show local notification
+  final notification = message.notification;
+  if (notification != null) {
+    await flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'high_importance_channel',
+          'High Importance Notifications',
+          channelDescription: 'This channel is used for important notifications.',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      payload: jsonEncode(message.data),
+    );
+  }
+  
+  // Save notification to Firestore
+  if (message.notification != null) {
+    final appNotification = AppNotification(
+      id: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      title: message.notification?.title ?? 'إشعار جديد',
+      body: message.notification?.body ?? '',
+      data: message.data,
+      timestamp: message.sentTime ?? DateTime.now(),
+      read: false,
+    );
+    
+    // Save to user's notifications if there's a user ID in the data
+    final userId = message.data['userId'];
+    if (userId != null && userId is String) {
+      await Repo.notification.saveUserNotification(userId, appNotification);
+    } else {
+      // Otherwise save to all users notifications
+      await Repo.notification.saveAllUsersNotification(appNotification);
+    }
+  }
 }
 
 class NotificationService {
-  NotificationService._();
   static final NotificationService instance = NotificationService._();
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _local = FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
+  
+  NotificationService._();
 
   /// Subscribe to the "all-users" topic
   Future<void> subscribeToAllUsersTopic() async {
     try {
       await _messaging.subscribeToTopic('all-users');
-      print('Subscribed to all-users topic');
+      debugPrint('Subscribed to all-users topic');
     } catch (e) {
-      print('Error subscribing to all-users topic: $e');
+      debugPrint('Error subscribing to all-users topic: $e');
     }
   }
 
@@ -35,19 +95,37 @@ class NotificationService {
   Future<void> unsubscribeFromAllUsersTopic() async {
     try {
       await _messaging.unsubscribeFromTopic('all-users');
-      print('Unsubscribed from all-users topic');
+      log('Unsubscribed from all-users topic', name: 'NotificationService');
     } catch (e) {
-      print('Error unsubscribing from all-users topic: $e');
+      log('Error unsubscribing from all-users topic: $e', name: 'NotificationService');
     }
   }
 
   Future<void> init() async {
     if (_initialized) return;
     
-    // Initialize local notifications first
+    // Request notification permissions
+    await _messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    
+    // Initialize local notifications
     const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
-    const InitializationSettings initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
+    const DarwinInitializationSettings iosInit = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
 
     await _local.initialize(
       initSettings,
@@ -58,54 +136,44 @@ class NotificationService {
             _handleNavigationFromData(data);
           } catch (e) {
             if (kDebugMode) {
-              print('Error handling notification tap: $e');
+              log('Error handling notification tap: $e', name: 'NotificationService');
             }
           }
         }
       },
     );
 
-    // iOS/macOS permissions
-    await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
-
-    // Subscribe to all-users topic
-    await subscribeToAllUsersTopic();
-
     // Create Android notification channel with heads-up notification support
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'high_importance_channel',
       'High Importance Notifications',
       description: 'This channel is used for important notifications.',
-      importance: Importance.max,  // Changed from high to max for heads-up
+      importance: Importance.max,
       playSound: true,
       enableVibration: true,
       showBadge: true,
       enableLights: true,
     );
 
-
     // Android: register channel
-    await _local.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+    await _local.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
 
     // Set background handler
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    // Subscribe this device to a public topic to allow broadcasting from Firebase Console
-    // e.g., send to topic 'all-users'
-    try {
-      await _messaging.subscribeToTopic('all-users');
-    } catch (_) {}
+    // Subscribe to all-users topic
+    await subscribeToAllUsersTopic();
 
     // Keep topic subscription on token refresh
     _messaging.onTokenRefresh.listen((_) async {
       try {
         await _messaging.subscribeToTopic('all-users');
-      } catch (_) {}
+      } catch (e) {
+        if (kDebugMode) {
+          log('Error refreshing token subscription: $e', name: 'NotificationService');
+        }
+      }
     });
 
     // Foreground messages
@@ -123,17 +191,14 @@ class NotificationService {
         channel.id,
         channel.name,
         channelDescription: channel.description,
-        importance: Importance.max,  // Max importance for heads-up
+        importance: Importance.max,
         priority: Priority.high,
         icon: android?.smallIcon,
         enableVibration: true,
         styleInformation: BigTextStyleInformation(body),
         visibility: NotificationVisibility.public,
-        // Set to alert once to show heads-up
         playSound: true,
-        // Set category to message for better handling
         category: AndroidNotificationCategory.message,
-        // Set ticker for accessibility
         ticker: title,
       );
 
@@ -150,7 +215,7 @@ class NotificationService {
         payload: jsonEncode(message.data),
       );
 
-      // Optionally update in-app list via controller
+      // Update in-app list via controller
       _pushToController(message);
     });
 
@@ -170,21 +235,25 @@ class NotificationService {
 
   Future<String?> getToken() => _messaging.getToken();
 
-  void _pushToController(RemoteMessage message) {
+  void _pushToController(RemoteMessage message) async {
     try {
-      final c = Get.isRegistered<NotificationController>()
-          ? Get.find<NotificationController>()
-          : null;
-      if (c == null) return;
-      final n = AppNotification(
-        id: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        title: message.notification?.title ?? message.data['title']?.toString() ?? 'إشعار',
-        body: message.notification?.body ?? message.data['body']?.toString() ?? '',
-        data: Map<String, dynamic>.from(message.data),
-        timestamp: message.sentTime ?? DateTime.now(),
-      );
-      c.addNotification(n);
-    } catch (_) {}
+      if (!Get.isRegistered<NotificationController>()) return;
+      
+      final controller = Get.find<NotificationController>();
+      final userId = Repo.auth.getCurrentUser()?.uid;
+      
+      if (userId == null) return;
+      
+      // The background handler already saves the notification,
+      // so we just need to refresh the controller
+      if (Get.isRegistered<NotificationController>()) {
+        await controller.fetchNotifications();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        log('Error in _pushToController: $e', name: 'NotificationService');
+      }
+    }
   }
 
   void _handleNavigationFromData(Map<String, dynamic> data) {
@@ -195,21 +264,4 @@ class NotificationService {
   }
 }
 
-class NotificationController extends GetxController {
-  final RxList<AppNotification> notifications = <AppNotification>[].obs;
-
-  void addNotification(AppNotification n) {
-    notifications.insert(0, n);
-  }
-
-  void markAllRead() {
-    for (int i = 0; i < notifications.length; i++) {
-      notifications[i] = notifications[i].copyWith(read: true);
-    }
-    notifications.refresh();
-  }
-
-  void clearAll() {
-    notifications.clear();
-  }
-}
+// NotificationController has been moved to a separate file

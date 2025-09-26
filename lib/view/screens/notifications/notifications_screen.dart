@@ -8,7 +8,8 @@ import 'package:store_app_v2/view/widgets/loading_indicator.dart';
 
 class NotificationsScreen extends StatelessWidget {
   NotificationsScreen({super.key});
-  final NotificationController controller = Get.find<NotificationController>();
+
+  final NotificationController _controller = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +18,9 @@ class NotificationsScreen extends StatelessWidget {
         title: 'الإشعارات',
         actions: [
           Obx(() {
-            if (controller.hasUnread) {
+            if (_controller.allNotifications.any((n) => !n.read)) {
               return TextButton(
-                onPressed: controller.markAllAsRead,
+                onPressed: _controller.markAllAsRead,
                 child: const Text('تعيين الكل كمقروء'),
               );
             }
@@ -28,14 +29,16 @@ class NotificationsScreen extends StatelessWidget {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading) {
+        if (_controller.isLoading) {
           return const Center(child: LoadingIndicator());
         }
 
-        final groupedNotifications = controller.groupedNotifications;
+        final groupedNotifications = _controller.groupedNotifications;
 
         if (groupedNotifications.isEmpty) {
-          return const Center(child: Text('لا توجد إشعارات حالياً'));
+          return const Center(
+            child: Text('لا توجد إشعارات'),
+          );
         }
 
         return ListView.builder(
@@ -44,15 +47,13 @@ class NotificationsScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             final date = groupedNotifications.keys.elementAt(index);
             final notifications = groupedNotifications[date]!;
-
+            
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildDateHeader(date),
                 const SizedBox(height: 8.0),
-                ...notifications.map(
-                  (notification) => _buildNotificationItem(notification),
-                ),
+                ...notifications.map((notification) => _buildNotificationItem(notification)),
                 const SizedBox(height: 16.0),
               ],
             );
@@ -65,7 +66,7 @@ class NotificationsScreen extends StatelessWidget {
   Widget _buildDateHeader(DateTime date) {
     final today = DateTime.now();
     final yesterday = today.subtract(const Duration(days: 1));
-
+    
     String dateText;
     if (date.year == today.year &&
         date.month == today.month &&
@@ -93,26 +94,25 @@ class NotificationsScreen extends StatelessWidget {
 
   Widget _buildNotificationItem(AppNotification notification) {
     final isUnread = !notification.read;
-
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 8.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
-        side:
-            isUnread
-                ? BorderSide(
-                  color: Get.theme.primaryColor.withOpacity(0.5),
-                  width: 1.0,
-                )
-                : BorderSide.none,
+        side: isUnread
+            ? BorderSide(
+                color: Get.theme.primaryColor.withOpacity(0.5),
+                width: 1.0,
+              )
+            : BorderSide.none,
       ),
       elevation: isUnread ? 2.0 : 1.0,
       child: InkWell(
         onTap: () {
           if (isUnread) {
-            controller.markAsRead(notification.id, isUserSpecific: true);
+            _controller.markAsRead(notification.id, isUserSpecific: true);
           }
-          // Handle notification tap
+          // Handle notification tap (e.g., navigate to specific screen)
           _handleNotificationTap(notification);
         },
         borderRadius: BorderRadius.circular(12.0),
@@ -127,8 +127,7 @@ class NotificationsScreen extends StatelessWidget {
                     child: Text(
                       notification.title,
                       style: Get.textTheme.titleSmall?.copyWith(
-                        fontWeight:
-                            isUnread ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ),

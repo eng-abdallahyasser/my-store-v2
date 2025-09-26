@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:store_app_v2/core/constants.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';
 import 'package:store_app_v2/data/model/product.dart';
@@ -10,11 +8,11 @@ import 'package:store_app_v2/view/screens/details/details_screen.dart';
 import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 class ProductCard extends StatelessWidget {
   const ProductCard({
-    Key? key,
+    super.key,
     this.width = 140,
     this.aspectRetio = 1.02,
     required this.product,
-  }) : super(key: key);
+  });
 
   final double width, aspectRetio;
   final Product product;
@@ -114,7 +112,7 @@ class ProductCard extends StatelessWidget {
 class LoveCountBtn extends StatefulWidget {
   final Product product;
 
-  const LoveCountBtn({Key? key, required this.product}) : super(key: key);
+  const LoveCountBtn({super.key, required this.product});
 
   @override
   State<LoveCountBtn> createState() => _LoveCountBtnState();

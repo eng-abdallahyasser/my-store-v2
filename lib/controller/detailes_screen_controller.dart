@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:store_app_v2/controller/cart_controller.dart';
 import 'package:store_app_v2/controller/navigation_bar_controller.dart';
 import 'package:store_app_v2/data/data_source/repo.dart';

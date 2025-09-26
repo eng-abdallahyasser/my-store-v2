@@ -1,11 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:store_app_v2/controller/notification_controller.dart';
 import 'package:store_app_v2/routes/app_pages.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
 import 'package:store_app_v2/core/constants.dart';
@@ -26,24 +27,31 @@ Future<bool> _isOutdated() async {
   final info = await PackageInfo.fromPlatform();
   final current = info.version; // e.g., 1.0.2
 
-  int _cmp(String a, String b) {
+  int cmp(String a, String b) {
     List<int> pa = a.split('.').map((e) => int.tryParse(e) ?? 0).toList();
     List<int> pb = b.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-    while (pa.length < 3) pa.add(0);
-    while (pb.length < 3) pb.add(0);
+    while (pa.length < 3) {
+      pa.add(0);
+    }
+    while (pb.length < 3) {
+      pb.add(0);
+    }
     for (int i = 0; i < 3; i++) {
       if (pa[i] != pb[i]) return pa[i] - pb[i];
     }
     return 0;
   }
 
-  return _cmp(current, minAppVersion) < 0; // current < min
+  return cmp(current, minAppVersion) < 0; // current < min
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Repo.init();
+
+  // Initialize date formatting for Arabic locale
+  await initializeDateFormatting('ar');
 
   // Ensure the NotificationController is available globally
   if (!Get.isRegistered<NotificationController>()) {

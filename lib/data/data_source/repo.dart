@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:store_app_v2/data/data_source/address_repository.dart';
 import 'package:store_app_v2/data/data_source/auth_repository.dart';
 import 'package:store_app_v2/data/data_source/favorites_repository.dart';
+import 'package:store_app_v2/data/data_source/notification_repository.dart';
 import 'package:store_app_v2/data/data_source/order_repository.dart';
 import 'package:store_app_v2/data/data_source/product_repository.dart';
 import 'package:store_app_v2/data/data_source/terms_repository.dart';
@@ -20,6 +21,7 @@ class Repo {
   static final FavoritesRepository favorites = FavoritesRepository();
   static final TermsRepository terms = TermsRepository();
   static final PrivacyPolicyRepository privacyPolicy = PrivacyPolicyRepository();
+  static final NotificationRepository notification = NotificationRepository();
   static final StorageServices _storage = StorageServices();
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
