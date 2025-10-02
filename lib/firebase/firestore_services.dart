@@ -118,7 +118,8 @@ class FirestoreServices {
         await FirebaseFirestore.instance.collection('users').doc(userID).get();
 
     if (userSnapshot.exists) {
-      List<dynamic> favorites = userSnapshot.get('favorites') ?? [];
+      final data = userSnapshot.data() as Map<String, dynamic>?;
+      final List<dynamic> favorites = data?['favorites'] ?? [];
       return List<String>.from(favorites);
     }
     return [];
@@ -160,7 +161,9 @@ class FirestoreServices {
                   as Map<String, dynamic>)['currentNumber'] ??
               0;
         }
-        log(" Counter document does not contain a valid currentNumber field.  $currentNumber");
+        log(
+          " Counter document does not contain a valid currentNumber field.  $currentNumber",
+        );
 
         // Increment the counter
         int newNumber = currentNumber + 1;
@@ -176,7 +179,7 @@ class FirestoreServices {
 
         // Update the orderID field in the newly created order document
         transaction.update(docRef, {"orderID": docRef.id});
-        
+
         // Update the counter value in Firestore
         transaction.update(counterRef, {'currentNumber': newNumber});
       });
@@ -230,12 +233,11 @@ class FirestoreServices {
       return [];
     }
   }
+
   Future<List<Category>> getCategories() async {
     try {
       QuerySnapshot querySnapshot =
-          await _firestore
-              .collection('categories')
-              .get();
+          await _firestore.collection('categories').get();
 
       return querySnapshot.docs
           .map((doc) => Category.fromMap(doc.data() as Map<String, dynamic>))

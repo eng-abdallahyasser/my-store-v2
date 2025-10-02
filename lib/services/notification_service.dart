@@ -15,40 +15,13 @@ import 'dart:developer';
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize local notifications
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  
-  // Initialize the local notifications plugin
-  await flutterLocalNotificationsPlugin.initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
-    ),
-  );
-  
-  // Show local notification
-  final notification = message.notification;
-  if (notification != null) {
-    await flutterLocalNotificationsPlugin.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'high_importance_channel',
-          'High Importance Notifications',
-          channelDescription: 'This channel is used for important notifications.',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      payload: jsonEncode(message.data),
-    );
-  }
-  
+  // NOTE: Do NOT show local notifications from the background handler.
+  // When the FCM payload contains a notification payload (notification.title/body),
+  // the system (Android/iOS) will already display it. Showing a local notification
+  // here often leads to duplicate notifications (one from the system and one from
+  // flutter_local_notifications). To avoid duplicates, keep background handler
+  // responsibilities limited to data processing (e.g., saving to Firestore).
+
   // Save notification to Firestore
   if (message.notification != null) {
     final appNotification = AppNotification(
@@ -59,7 +32,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       timestamp: message.sentTime ?? DateTime.now(),
       read: false,
     );
-    
+
     // Save to user's notifications if there's a user ID in the data
     final userId = message.data['userId'];
     if (userId != null && userId is String) {
@@ -75,10 +48,11 @@ class NotificationService {
   static final NotificationService instance = NotificationService._();
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _local = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _local =
+      FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
-  
+
   NotificationService._();
 
   /// Subscribe to the "all-users" topic
@@ -97,13 +71,16 @@ class NotificationService {
       await _messaging.unsubscribeFromTopic('all-users');
       log('Unsubscribed from all-users topic', name: 'NotificationService');
     } catch (e) {
-      log('Error unsubscribing from all-users topic: $e', name: 'NotificationService');
+      log(
+        'Error unsubscribing from all-users topic: $e',
+        name: 'NotificationService',
+      );
     }
   }
 
   Future<void> init() async {
     if (_initialized) return;
-    
+
     // Request notification permissions
     await _messaging.requestPermission(
       alert: true,
@@ -114,9 +91,10 @@ class NotificationService {
       provisional: false,
       sound: true,
     );
-    
+
     // Initialize local notifications
-    const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidInit =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -136,7 +114,10 @@ class NotificationService {
             _handleNavigationFromData(data);
           } catch (e) {
             if (kDebugMode) {
-              log('Error handling notification tap: $e', name: 'NotificationService');
+              log(
+                'Error handling notification tap: $e',
+                name: 'NotificationService',
+              );
             }
           }
         }
@@ -156,7 +137,10 @@ class NotificationService {
     );
 
     // Android: register channel
-    await _local.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+    await _local
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     // Set background handler
@@ -171,7 +155,10 @@ class NotificationService {
         await _messaging.subscribeToTopic('all-users');
       } catch (e) {
         if (kDebugMode) {
-          log('Error refreshing token subscription: $e', name: 'NotificationService');
+          log(
+            'Error refreshing token subscription: $e',
+            name: 'NotificationService',
+          );
         }
       }
     });
@@ -183,7 +170,8 @@ class NotificationService {
 
       // Build local notification for foreground
       final Map<String, dynamic> data = message.data;
-      final String title = notification?.title ?? data['title']?.toString() ?? 'إشعار جديد';
+      final String title =
+          notification?.title ?? data['title']?.toString() ?? 'إشعار جديد';
       final String body = notification?.body ?? data['body']?.toString() ?? '';
 
       // Create notification details with heads-up notification configuration
@@ -238,12 +226,12 @@ class NotificationService {
   void _pushToController(RemoteMessage message) async {
     try {
       if (!Get.isRegistered<NotificationController>()) return;
-      
+
       final controller = Get.find<NotificationController>();
       final userId = Repo.auth.getCurrentUser()?.uid;
-      
+
       if (userId == null) return;
-      
+
       // The background handler already saves the notification,
       // so we just need to refresh the controller
       if (Get.isRegistered<NotificationController>()) {

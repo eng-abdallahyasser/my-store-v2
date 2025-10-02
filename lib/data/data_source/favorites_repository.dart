@@ -7,7 +7,8 @@ class FavoritesRepository extends BaseRepository {
         await firestore.collection('users').doc(userID).get();
 
     if (userSnapshot.exists) {
-      List<dynamic> favorites = userSnapshot.get('favorites') ?? [];
+      final data = userSnapshot.data() as Map<String, dynamic>?;
+      final List<dynamic> favorites = data?['favorites'] ?? [];
       return List<String>.from(favorites);
     }
     return [];
@@ -17,7 +18,7 @@ class FavoritesRepository extends BaseRepository {
     DocumentReference docRef = firestore.collection("products").doc(productId);
     DocumentReference userRef = firestore.collection('users').doc(userId);
     int currentFavoriteCount = 0;
-    
+
     await firestore.runTransaction((transaction) async {
       DocumentSnapshot docSnapshot = await transaction.get(docRef);
       currentFavoriteCount =
@@ -28,12 +29,9 @@ class FavoritesRepository extends BaseRepository {
         });
       }
 
-      await userRef.set(
-        {
-          'favorites': FieldValue.arrayUnion([productId]),
-        },
-        SetOptions(merge: true),
-      );
+      await userRef.set({
+        'favorites': FieldValue.arrayUnion([productId]),
+      }, SetOptions(merge: true));
     });
 
     return currentFavoriteCount + 1;
@@ -43,7 +41,7 @@ class FavoritesRepository extends BaseRepository {
     DocumentReference docRef = firestore.collection("products").doc(productId);
     DocumentReference userRef = firestore.collection('users').doc(userId);
     int newFavoriteCount = 0;
-    
+
     await firestore.runTransaction((transaction) async {
       DocumentSnapshot docSnapshot = await transaction.get(docRef);
 

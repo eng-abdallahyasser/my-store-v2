@@ -79,6 +79,13 @@ class Product {
     }
     return choosedVariantCost + price;
   }
+  double calculateTotalCostWithVariants(List<Variant> choosedVariant) {
+    double choosedVariantCost = 0.0;
+      for (Variant variant in choosedVariant) {
+        choosedVariantCost += variant.price;
+      }
+    return choosedVariantCost + price;
+  }
 
   String optionDescription() {
     String optionDescription = "";
