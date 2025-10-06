@@ -1,0 +1,58 @@
+import 'package:get/get.dart';
+
+class AppTranslations extends Translations {
+  static const String en = 'en';
+  static const String ar = 'ar';
+
+  @override
+  Map<String, Map<String, String>> get keys => {
+    en: {
+      'sign_in': 'Sign In',
+      'sign_up_now': 'Sign Up Now',
+      'sign_in_now': 'Sign In Now',
+      'continue_with_google': 'Continue with Google',
+      'settings': 'Settings',
+      'terms': 'Terms & Conditions',
+      'privacy_policy': 'Privacy Policy',
+      'suggestions': 'Suggestions & Complaints',
+      'logout': 'Log Out',
+      'my_account': 'My Account',
+      'my_addresses': 'My Addresses',
+      'my_orders': 'My Orders',
+      'notifications': 'Notifications',
+      'app_version': 'App version: %s',
+      'loading_signin': 'Signing in...',
+      'error': 'Error',
+      'accept': 'Accept',
+      'decline': 'Decline',
+      'language': 'Language',
+      'choose_language': 'Choose language',
+      'english': 'English',
+      'arabic': 'Arabic',
+    },
+    ar: {
+      'sign_in': 'تسجيل الدخول',
+      'sign_up_now': 'إنشاء حساب',
+      'sign_in_now': 'تسجيل الدخول الآن',
+      'continue_with_google': 'المتابعة عبر Google',
+      'settings': 'الإعدادات',
+      'terms': 'الشروط والأحكام',
+      'privacy_policy': 'سياسة الخصوصية',
+      'suggestions': 'الاقتراحات والشكاوى',
+      'logout': 'تسجيل الخروج',
+      'my_account': 'حسابي',
+      'my_addresses': 'عناويني',
+      'my_orders': 'طلباتي',
+      'notifications': 'الإشعارات',
+      'app_version': 'إصدار التطبيق: %s',
+      'loading_signin': 'جاري تسجيل الدخول...',
+      'error': 'خطأ',
+      'accept': 'قبول',
+      'decline': 'الانسحاب',
+      'language': 'اللغة',
+      'choose_language': 'اختر اللغة',
+      'english': 'الانجليزية',
+      'arabic': 'العربية',
+    },
+  };
+}

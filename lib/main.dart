@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:store_app_v2/controller/notification_controller.dart';
+import 'package:store_app_v2/core/translations.dart';
 import 'package:store_app_v2/routes/app_pages.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
 import 'package:store_app_v2/core/constants.dart';
@@ -17,10 +18,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:store_app_v2/view/screens/favourite/favourites_screen.dart';
 
 Future<bool> _isOutdated() async {
-  final doc = await FirebaseFirestore.instance
-      .collection('status')
-      .doc('main_restaurant')
-      .get();
+  final doc =
+      await FirebaseFirestore.instance
+          .collection('status')
+          .doc('main_restaurant')
+          .get();
   final minAppVersion = (doc.data() ?? const {})['minAppVersion']?.toString();
   if (minAppVersion == null || minAppVersion.isEmpty) return false;
 
@@ -84,6 +86,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
+      translations: AppTranslations(),
+      locale: const Locale('en'),
+      fallbackLocale: const Locale('en'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         textTheme: const TextTheme(
@@ -94,12 +99,7 @@ class MyApp extends StatelessWidget {
       // Ensure all screens respect bottom system insets (Android nav bar)
       // while keeping AppBars aligned with the status bar area.
       builder: (context, child) {
-        if (child == null) return const SizedBox.shrink();
-        return SafeArea(
-          top: false, // AppBar already handles top insets
-          bottom: true, // prevent content from going under system nav bar
-          child: child,
-        );
+        return child ?? const SizedBox.shrink();
       },
       initialRoute: MyRoutes.splashScreen,
       getPages: AppPages.routes,
@@ -170,5 +170,4 @@ void uploadProducts() async {
   }
 
   log("✅ Products uploaded successfully!");
-
 }

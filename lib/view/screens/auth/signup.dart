@@ -173,33 +173,55 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "I already have acount, ",
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "I already have acount, ",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.offAllNamed(MyRoutes.signInScreen);
+                        },
+                        child: const Text(
+                          "Sign In Now",
                           style: TextStyle(
                             fontSize: 18.0,
-                            fontWeight: FontWeight.w400,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Get.offAllNamed(MyRoutes.signInScreen);
-                          },
-                          child: const Text(
-                            "Sign In Now",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 6),
+                  // language chooser
+                  ElevatedButton(
+                    onPressed: () async {
+                      final sel = await Get.defaultDialog<String>(
+                        title: 'choose_language'.tr,
+                        content: Column(
+                          children: [
+                            ListTile(
+                              title: Text('english'.tr),
+                              onTap: () => Get.back(result: 'en'),
+                            ),
+                            ListTile(
+                              title: Text('arabic'.tr),
+                              onTap: () => Get.back(result: 'ar'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (sel != null) Get.updateLocale(Locale(sel));
+                    },
+                    child: Text('language'.tr, style: TextStyle(color: Colors.grey[700])),
+                  ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

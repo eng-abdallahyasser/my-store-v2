@@ -11,7 +11,6 @@ import 'package:store_app_v2/view/screens/support/terms_screen.dart';
 import 'package:store_app_v2/view/screens/support/privacy_policy_screen.dart';
 import 'package:store_app_v2/routes/my_routes.dart';
 
-
 class Profile extends StatelessWidget {
   final ProfileController controller = Get.put(ProfileController());
   Profile({super.key});
@@ -19,9 +18,7 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-      ),
+      appBar: AppBar(title: Text('my_account'.tr)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
@@ -57,9 +54,33 @@ class Profile extends StatelessWidget {
               },
             ),
             ProfileMenu(
-              text: "Settings",
+              text: 'settings'.tr,
               icon: "assets/icons/Settings.svg",
               press: () {},
+            ),
+            ProfileMenu(
+              text: 'language'.tr,
+              icon: "assets/icons/Settings.svg",
+              press: () async {
+                final sel = await Get.defaultDialog<String>(
+                  title: 'choose_language'.tr,
+                  content: Column(
+                    children: [
+                      ListTile(
+                        title: Text('english'.tr),
+                        onTap: () => Get.back(result: 'en'),
+                      ),
+                      ListTile(
+                        title: Text('arabic'.tr),
+                        onTap: () => Get.back(result: 'ar'),
+                      ),
+                    ],
+                  ),
+                );
+                if (sel != null) {
+                  Get.updateLocale(Locale(sel));
+                }
+              },
             ),
             ProfileMenu(
               text: "Terms & Conditions",
@@ -97,10 +118,7 @@ class Profile extends StatelessWidget {
                 if (snapshot.hasData) {
                   return Text(
                     'App version: ${snapshot.data}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   );
                 }
                 return const SizedBox.shrink();

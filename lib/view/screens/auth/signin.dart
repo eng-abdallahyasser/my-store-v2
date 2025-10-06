@@ -34,29 +34,33 @@ class SignInScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 70.0),
               child: Column(
                 children: [
-                  Image.asset("assets/images/logo.jpg",
+                  Image.asset(
+                    "assets/images/logo.jpg",
                     height: 120,
                     width: 200,
                     fit: BoxFit.cover,
                   ),
-                  const Center(
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const Center(
-                    child: Text(
-                      "Login to your account",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          'sign_in'.tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'sign_in_now'.tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
@@ -143,17 +147,26 @@ class SignInScreen extends StatelessWidget {
                                   child: OutlinedButton(
                                     onPressed: controller.googleSignIn,
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
-                                      side: BorderSide(color: Colors.grey.shade300),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      side: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         // You can replace the emoji with an asset icon if available
-                                        Image.asset("assets/images/google.png", width: 24, height: 24),
+                                        Image.asset(
+                                          "assets/images/google.png",
+                                          width: 24,
+                                          height: 24,
+                                        ),
                                         SizedBox(width: 6),
                                         Text(
                                           'Continue with Google',
@@ -175,32 +188,53 @@ class SignInScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "I don't have acount, ",
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "I don't have acount, ",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(MyRoutes.signUpScreen);
+                        },
+                        child: const Text(
+                          "Sign Up Now",
                           style: TextStyle(
                             fontSize: 18.0,
-                            fontWeight: FontWeight.w400,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Get.toNamed(MyRoutes.signUpScreen);
-                          },
-                          child: const Text(
-                            "Sign Up Now",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // language chooser
+                  ElevatedButton(
+                    onPressed: () async {
+                      final sel = await Get.defaultDialog<String>(
+                        title: 'choose_language'.tr,
+                        content: Column(
+                          children: [
+                            ListTile(
+                              title: Text('english'.tr),
+                              onTap: () => Get.back(result: 'en'),
                             ),
-                          ),
+                            ListTile(
+                              title: Text('arabic'.tr),
+                              onTap: () => Get.back(result: 'ar'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                      if (sel != null) Get.updateLocale(Locale(sel));
+                    },
+                    child: Text('language'.tr, style: TextStyle(color: Colors.grey[700])),
                   ),
                 ],
               ),
