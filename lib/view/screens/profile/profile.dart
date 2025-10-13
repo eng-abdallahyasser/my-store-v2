@@ -28,26 +28,26 @@ class Profile extends StatelessWidget {
             Text(controller.getUserName()),
             const SizedBox(height: 20),
             ProfileMenu(
-              text: "My Account",
+              text: 'my_account'.tr,
               icon: "assets/icons/User Icon.svg",
               press: () => {},
             ),
             ProfileMenu(
-              text: "My Addresses",
+              text: 'my_addresses'.tr,
               icon: "assets/icons/Location point.svg",
               press: () {
                 Get.to(() => AddressScreen());
               },
             ),
             ProfileMenu(
-              text: "My Orders",
+              text: 'my_orders'.tr,
               icon: "assets/icons/Cart Icon.svg",
               press: () {
                 Get.to(() => OrdersListScreen());
               },
             ),
             ProfileMenu(
-              text: "Notifications",
+              text: 'notifications'.tr,
               icon: "assets/icons/Bell.svg",
               press: () {
                 Get.toNamed(MyRoutes.notifications);
@@ -83,28 +83,28 @@ class Profile extends StatelessWidget {
               },
             ),
             ProfileMenu(
-              text: "Terms & Conditions",
+              text: 'terms'.tr,
               icon: "assets/icons/Question mark.svg",
               press: () {
                 Get.to(() => const TermsScreen());
               },
             ),
             ProfileMenu(
-              text: "Privacy Policy",
+              text: 'privacy_policy'.tr,
               icon: "assets/icons/Question mark.svg",
               press: () {
                 Get.to(() => const PrivacyPolicyScreen());
               },
             ),
             ProfileMenu(
-              text: "Suggestions & Complaints",
+              text: 'suggestions'.tr,
               icon: "assets/icons/Question mark.svg",
               press: () {
                 Get.to(() => const FeedbackScreen());
               },
             ),
             ProfileMenu(
-              text: "Log Out",
+              text: 'logout'.tr,
               icon: "assets/icons/Log out.svg",
               press: controller.logOut,
             ),

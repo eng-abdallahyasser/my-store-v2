@@ -7,6 +7,11 @@ class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     en: {
+      'email': 'Email',
+      'name': 'Name',
+      'password': 'Password',
+      'confirm_password': 'Confirm password',
+      'i_agree_to': 'I agree to the ',
       'sign_in': 'Sign In',
       'sign_up_now': 'Sign Up Now',
       'sign_in_now': 'Sign In Now',
@@ -31,6 +36,11 @@ class AppTranslations extends Translations {
       'arabic': 'Arabic',
     },
     ar: {
+      'email': 'البريد الإلكتروني',
+      'name': 'الاسم',
+      'password': 'كلمة المرور',
+      'confirm_password': 'تأكيد كلمة المرور',
+      'i_agree_to': 'أوافق على ',
       'sign_in': 'تسجيل الدخول',
       'sign_up_now': 'إنشاء حساب',
       'sign_in_now': 'تسجيل الدخول الآن',

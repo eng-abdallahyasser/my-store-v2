@@ -34,25 +34,26 @@ class SignUpScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 70.0),
               child: Column(
                 children: [
-                  Image.asset("assets/images/logo.jpg",
+                  Image.asset(
+                    "assets/images/logo.jpg",
                     height: 120,
                     width: 200,
                     fit: BoxFit.cover,
                   ),
-                  const Center(
+                  Center(
                     child: Text(
-                      'SignUp',
-                      style: TextStyle(
+                      'sign_up_now'.tr,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const Center(
+                  Center(
                     child: Text(
-                      'Create a new account',
-                      style: TextStyle(
+                      'sign_in_now'.tr,
+                      style: const TextStyle(
                         color: MyColors.white,
                         fontSize: 18.0,
                         fontWeight: FontWeight.w500,
@@ -75,13 +76,13 @@ class SignUpScreen extends StatelessWidget {
                               children: [
                                 const SizedBox(height: 10),
                                 MyTextfield(
-                                  hintText: 'Name',
+                                  hintText: 'my_account'.tr,
                                   controller: controller.nameController,
                                   obscureText: false,
                                 ),
                                 const SizedBox(height: 20),
                                 MyTextfield(
-                                  hintText: 'Email',
+                                  hintText: 'email'.tr,
                                   controller: controller.emailController,
                                   obscureText: false,
                                 ),
@@ -90,7 +91,7 @@ class SignUpScreen extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: MyTextfield(
-                                        hintText: 'Password',
+                                        hintText: 'password'.tr,
                                         controller: controller.pwController,
                                         obscureText: controller.showPassword,
                                       ),
@@ -110,7 +111,7 @@ class SignUpScreen extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: MyTextfield(
-                                        hintText: 'Confirm password',
+                                        hintText: 'confirm_password'.tr,
                                         controller:
                                             controller.confirmPwController,
                                         obscureText:
@@ -140,7 +141,7 @@ class SignUpScreen extends StatelessWidget {
                                     Expanded(
                                       child: Wrap(
                                         children: [
-                                          const Text('I agree to the '),
+                                          Text('i_agree_to'.tr),
                                           GestureDetector(
                                             onTap: () {
                                               Get.to(() => const TermsScreen());
@@ -149,7 +150,8 @@ class SignUpScreen extends StatelessWidget {
                                               'Terms & Conditions',
                                               style: TextStyle(
                                                 color: Colors.blue,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                               ),
                                             ),
                                           ),
@@ -162,7 +164,7 @@ class SignUpScreen extends StatelessWidget {
                                 Center(
                                   child: GestureDetector(
                                     onTap: controller.signUp,
-                                    child: const MyButton(text: "Sign Up"),
+                                    child: MyButton(text: 'sign_up_now'.tr),
                                   ),
                                 ),
                               ],
@@ -219,7 +221,10 @@ class SignUpScreen extends StatelessWidget {
                       );
                       if (sel != null) Get.updateLocale(Locale(sel));
                     },
-                    child: Text('language'.tr, style: TextStyle(color: Colors.grey[700])),
+                    child: Text(
+                      'language'.tr,
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
                   ),
                   const SizedBox(height: 40),
                 ],

@@ -12,26 +12,22 @@ class AddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Addresses"),
-      ),
+      appBar: AppBar(title: Text('my_addresses'.tr)),
       body: SingleChildScrollView(
         child: Column(
           children: [
             GetBuilder<AddressController>(
               builder: (context) {
                 return FutureBuilder(
-                  future: Repo.address.getAddresses(Repo.auth.getCurrentUser()!.uid),
+                  future: Repo.address.getAddresses(
+                    Repo.auth.getCurrentUser()!.uid,
+                  ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(
-                        child: Text("Error..."),
-                      );
+                      return const Center(child: Text("Error..."));
                     }
                     if (snapshot.hasData) {
                       var addresses = snapshot.data as List<Address>;
@@ -43,18 +39,16 @@ class AddressScreen extends StatelessWidget {
                         itemCount: addresses.length,
                         itemBuilder: (context, index) {
                           return AddressCart(
-                              address:
-                                  addresses[index]); // Correct way to pass address
+                            address: addresses[index],
+                          ); // Correct way to pass address
                         },
                       );
-                      
                     }
-                    return const SizedBox
-                                  .shrink(); // here by default width and height is 0
+                    return const SizedBox.shrink(); // here by default width and height is 0
                   },
                 );
-              }
-            )
+              },
+            ),
           ],
         ),
       ),

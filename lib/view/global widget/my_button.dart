@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:store_app_v2/core/constants.dart';
 
 class MyButton extends StatelessWidget {
@@ -15,7 +16,7 @@ class MyButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 100.0, vertical: 8.0),
         child: Text(
-          text,
+          text.tr,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 22,

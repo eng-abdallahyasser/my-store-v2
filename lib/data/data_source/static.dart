@@ -52,14 +52,12 @@ List<BottomBarDestination> bottomBarDestinations = [
   BottomBarDestination(
     icon: "assets/icons/User Icon.svg",
     route: MyRoutes.profile,
-    label: "Profile",
+    label: 'my_account',
     routeWidget: Profile(),
-  )
+  ),
 ];
 FirestoreServices firestoreServices = FirestoreServices();
 Future<List<Category>> categories = firestoreServices.getCategories();
 
 const String description =
     "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …";
-
-

@@ -88,7 +88,7 @@ class SignInScreen extends StatelessWidget {
                                 const SizedBox(height: 10.0),
                                 MyTextfield(
                                   controller: controller.emailController,
-                                  hintText: "Email",
+                                  hintText: 'email'.tr,
                                   obscureText: false,
                                 ),
                                 const SizedBox(height: 20),
@@ -97,7 +97,7 @@ class SignInScreen extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: MyTextfield(
-                                        hintText: 'Password',
+                                        hintText: 'password'.tr,
                                         controller: controller.pwController,
                                         obscureText: controller.showPassword,
                                       ),
@@ -137,7 +137,7 @@ class SignInScreen extends StatelessWidget {
                                 Center(
                                   child: GestureDetector(
                                     onTap: controller.signIn,
-                                    child: const MyButton(text: "Sign In"),
+                                    child: const MyButton(text: 'sign_in'),
                                   ),
                                 ),
                                 const SizedBox(height: 20),
@@ -169,7 +169,7 @@ class SignInScreen extends StatelessWidget {
                                         ),
                                         SizedBox(width: 6),
                                         Text(
-                                          'Continue with Google',
+                                          'continue_with_google'.tr,
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.black87,
