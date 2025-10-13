@@ -191,7 +191,9 @@ class SignInScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      // TODO(i18n): move this static text to translations and replace with 'dont_have_account'.tr
+                      // Example: Text('dont_have_account'.tr)
+                      Text(
                         "I don't have acount, ",
                         style: TextStyle(
                           fontSize: 18.0,
@@ -202,7 +204,9 @@ class SignInScreen extends StatelessWidget {
                         onTap: () {
                           Get.toNamed(MyRoutes.signUpScreen);
                         },
-                        child: const Text(
+                        // TODO(i18n): move this static text to translations and replace with 'sign_up_now'.tr
+                        // Example: Text('sign_up_now'.tr, style: ...)
+                        child: Text(
                           "Sign Up Now",
                           style: TextStyle(
                             fontSize: 18.0,
@@ -234,7 +238,10 @@ class SignInScreen extends StatelessWidget {
                       );
                       if (sel != null) Get.updateLocale(Locale(sel));
                     },
-                    child: Text('language'.tr, style: TextStyle(color: Colors.grey[700])),
+                    child: Text(
+                      'language'.tr,
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
                   ),
                 ],
               ),
